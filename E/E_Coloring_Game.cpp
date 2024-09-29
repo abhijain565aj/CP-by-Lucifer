@@ -1,0 +1,233 @@
+// Solution by Abhi Jain aka Lucifer aka abhijain565aj
+// Mera solution kyun dekh rha?? ... (｡◕‿‿◕｡)
+
+// Template maine nhi banaya he pura, codeforces pe dusro k solutions se inspired template he ...
+// Kudos to them ❤
+
+#pragma GCC optimize("O3,unroll-loops")
+
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
+using namespace std;
+using namespace std::chrono;
+using namespace __gnu_pbds;
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> // find_by_order, order_of_key
+
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double lld;
+
+#define MOD 1000000007
+#define INF 1e18
+
+#define vi vector<int>
+#define vb vector<bool>
+#define vs vector<string>
+#define vl vector<ll>
+#define vvi vector<vi>
+#define vvl vector<vl>
+#define pii pair<int, int>
+#define pli pair<ll, int>
+#define pll pair<ll, ll>
+#define v(x) vector<x>
+#define nextL cout << "\n"
+
+#define fo(i, n) for (decltype(n) i = 0; i < n; i++)
+#define re(i, n) for (decltype(n) i = n - 1; i >= 0; i--)
+#define fo1(i, a, b) for (decltype(b) i = a; i < b; i++)
+#define re1(i, a, b) for (decltype(a) i = a; i >= b; i--)
+
+#define YN(possible) cout << ((possible) ? "YES" : "NO") << endl;
+#define all(x) (x).begin(), (x).end()
+#define sortall(x) sort(all(x))
+#define F first
+#define S second
+#define pb push_back
+// a.resize(unique(all(a)) - a.begin());  -> unque element me convert karta hai
+
+#define read(a, n)              \
+    for (int i = 0; i < n; ++i) \
+        cin >> a[i];
+#define print_space(a, n)         \
+    for (int i = 0; i < n; ++i)   \
+        if (i == n - 1)           \
+            cout << a[i] << "\n"; \
+        else                      \
+            cout << a[i] << ' ';
+#ifndef ONLINE_JUDGE
+#include "D:/CodeForces/0_debug.cpp"
+#else
+#define debug(x)
+#define debug2(x, y)
+#define debug3(x, y, z)
+#define test(tt)
+#define printTC(tc)
+#endif
+
+// min_max functions
+template <typename T>
+T max3(T a, T b, T c)
+{
+    return max(a, max(b, c));
+}
+template <typename T>
+T max4(T a, T b, T c, T d)
+{
+    return max(max(a, d), max(b, c));
+}
+template <typename T>
+T min3(T a, T b, T c)
+{
+    return min(a, min(b, c));
+}
+template <typename T>
+T min4(T a, T b, T c, T d)
+{
+    return min(min(a, d), min(b, c));
+}
+
+/*
+|     /\     |  _ \  | |  | | |_   _| ( )          / ____|  / __ \  |  __ \  |  ____| |
+|    /  \    | |_) | | |__| |   | |   |/   ___    | |      | |  | | | |  | | | |__    |
+|   / /\ \   |  _ <  |  __  |   | |       / __|   | |      | |  | | | |  | | |  __|   |
+|  / ____ \  | |_) | | |  | |  _| |_      \__ \   | |____  | |__| | | |__| | | |____  |
+| /_/    \_\ |____/  |_|  |_| |_____|     |___/    \_____|  \____/  |_____/  |______| |
+*/
+void solve()
+{
+    int n, m;
+    cin >> n >> m;
+    vvi adj(n + 1);
+    fo(i, m)
+    {
+        int x, y;
+        cin >> x >> y;
+        adj[x].pb(y);
+        adj[y].pb(x);
+    }
+    vi value(n + 1, -1);
+    vb done(n + 1, false);
+    bool bipartite = true;
+    queue<int> q;
+    fo(i, n)
+    {
+        if (done[i + 1])
+        {
+            continue;
+        }
+        debug(i);
+        q.push(i + 1);
+        value[i + 1] = 0;
+        while (!q.empty())
+        {
+            int current = q.front();
+            q.pop();
+            done[current] = true;
+            debug(current);
+            for (auto v : adj[current])
+            {
+                if (value[v] != -1)
+                {
+                    if (value[current] ^ 1 != value[v])
+                    {
+                        bipartite = false;
+                    }
+                }
+                else
+                {
+                    value[v] = value[current] ^ 1;
+                    q.push(v);
+                }
+            }
+        }
+    }
+    debug(value);
+    if (!bipartite)
+    {
+        cout << "Alice" << endl;
+        int x, y;
+        fo(i, n)
+        {
+            cout << "1 2" << endl;
+            cin >> x >> y;
+        }
+    }
+    if (bipartite)
+    {
+        cout << "Bob" << endl;
+        vi s1, s2;
+        fo(i, n)
+        {
+            if (value[i + 1] == 1)
+                s1.pb(i + 1);
+            else
+                s2.pb(i + 1);
+        }
+        int x, y;
+        fo(i, n)
+        {
+            cin >> x >> y;
+            if (x > y)
+            {
+                swap(x, y);
+            }
+            if (x == 1)
+            {
+                if (!s1.empty())
+                {
+                    cout << s1.back() << " 1" << endl;
+                    s1.pop_back();
+                }
+                else
+                {
+                    cout << s2.back() << " " << y << endl;
+                    s2.pop_back();
+                }
+            }
+            else if (x == 2)
+            {
+                if (!s2.empty())
+                {
+                    cout << s2.back() << " 2" << endl;
+                    s2.pop_back();
+                }
+                else
+                {
+                    cout << s1.back() << " " << y << endl;
+                    s1.pop_back();
+                }
+            }
+        }
+    }
+}
+/*
+|   _____    ____    _____    ______     ______   _   _   _____     _____
+|  / ____|  / __ \  |  __ \  |  ____|   |  ____| | \ | | |  __ \   / ____| |
+| | |      | |  | | | |  | | | |__      | |__    |  \| | | |  | | | (___   |
+| | |      | |  | | | |  | | |  __|     |  __|   | . ` | | |  | |  \___ \  |
+| | |____  | |__| | | |__| | | |____    | |____  | |\  | | |__| |  ____) | |
+|  \_____|  \____/  |_____/  |______|   |______| |_| \_| |_____/  |_____/  |
+*/
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+#ifndef ONLINE_JUDGE
+    freopen("D:/CodeForces/0_Error.txt", "w", stderr);
+#endif
+    int testCases = 1;
+    cin >> testCases;
+    fo(tt, testCases)
+    {
+        test(tt + 1);
+#ifndef ONLINE_JUDGE
+        // printTC(tt + 1);
+#endif
+        solve();
+    }
+#ifndef ONLINE_JUDGE
+    cerr << "------------------------------------------\n";
+#endif
+}
