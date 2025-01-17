@@ -56,6 +56,8 @@ template <class T>
 void _print(set<T> v);
 template <class T, class V>
 void _print(map<T, V> v);
+template <class T, class V>
+void _print(unordered_map<T, V> v);
 template <class T>
 void _print(multiset<T> v);
 template <class T, class V>
@@ -111,5 +113,22 @@ void _print(map<T, V> v)
     }
     cerr << "]\n";
 }
+template <class T, class V>
+void _print(unordered_map<T, V> v)
+{
+    cerr << "[ ";
+    for (auto i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]\n";
+}
+#define printTC(tt)                                         \
+    cout << "------------------------------------------\n"; \
+    if (tt != 0)                                            \
+        cerr << "Case #" << tt << ": \n";
 
-#define printTC(tt) cout << "------------------------------------------\nCase #" << tt << ": \n";
+#ifndef ONLINE_JUDGE
+#define Error_file(x) freopen(x, "w", stderr);
+#endif

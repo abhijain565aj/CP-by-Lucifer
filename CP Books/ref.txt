@@ -1,0 +1,11 @@
+Texts / References :
+1. Halim, Steven and Halim, Felix, Competitive Programming 3, 2013. Ebook available at lulu.com. Site associate with with the book is http://cpbook.net 
+2. Knuth, Donald E. The Art of Computer Programming, Vol. 3: Sorting and Searching, Addison Wesley, 1973. 
+3. Weiss, Mark Allen. Data structure and algorithm analysis in C++, 4th Ed, Pearson, 2014. 
+4. Herstein, Israel N. Topics in algebra. John Wiley & Sons, 2006. 
+5. Cormen, Thomas H., Leiserson, C. E., Rivest, R. L., & Stein, C. Introduction to algorithms (Vol. 6). Cambridge: MIT press. 2001. 
+6. Knuth, Donald E., Graham, Ronald L., and Patashnik, Oren. Concrete mathematics. Adison Wesley. 1989. 
+7. Dasgupta, Sanjoy, Papadimitriou, Christos H., and Vazirani, Umesh, Algorithms. McGraw-Hill, Inc., 2006. 
+8. Topcoder tutorials - https://www.topcoder.com/community/data-science/data-science-tutorials/ 
+9. Nite Nimajnebâ€™s site - http://comscigate.com/Books/contests/icpc.pdf 
+10. Slides from a Stanford Course - http://web.stanford.edu/class/cs97si/
