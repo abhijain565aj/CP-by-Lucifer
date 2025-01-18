@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+#define F first
+#define S second
 #ifndef ONLINE_JUDGE
 #define debug(x)       \
     cerr << #x << " "; \
@@ -70,8 +71,7 @@ void _print(pair<T, V> p)
     cerr << "}";
 }
 template <class T>
-void _print(vector<T> v)
-{
+void _print(vector<T> v){
     cerr << "[ ";
     for (T i : v)
     {

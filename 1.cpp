@@ -36,7 +36,6 @@ typedef long double lld;
 #define pli pair<ll, int>
 #define pll pair<ll, ll>
 #define v(x) vector<x>
-#define nextL cout << "\n"
 
 #define fo(i, n) for (decltype(n) i = 0; i < n; i++)
 #define re(i, n) for (decltype(n) i = n - 1; i >= 0; i--)
@@ -51,20 +50,9 @@ typedef long double lld;
 #define pb push_back
 // a.resize(unique(all(a)) - a.begin());  -> unque element me convert karta hai
 
-#define fastio               \
-    ios::sync_with_stdio(0); \
-    cin.tie(0);              \
-    cout.tie(0);
-
-#define read(a, n)              \
-    for (int i = 0; i < n; ++i) \
-        cin >> a[i];
-#define print_space(a, n)         \
-    for (int i = 0; i < n; ++i)   \
-        if (i == n - 1)           \
-            cout << a[i] << "\n"; \
-        else                      \
-            cout << a[i] << ' ';
+#define fastio ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+#define read(a, n) for (int i = 0; i < n; ++i) cin >> a[i];
+#define print_space(a, n) for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
 void solve()
 {
@@ -72,12 +60,10 @@ void solve()
 
 int main()
 {
-    fastio;
-    Error_file("0_Error.txt");
+    fastio; Error_file("0_Error.txt");
     int testCases = 1;
     cin >> testCases;
-    fo(tt, testCases)
-    {
+    fo(tt, testCases){
         test(tt + 1);
         solve();
     }

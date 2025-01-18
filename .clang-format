@@ -1,0 +1,4 @@
+BasedOnStyle: Google
+AllowShortFunctionsOnASingleLine: All
+ColumnLimit: 0
+AllowShortIfStatementsOnASingleLine: true
