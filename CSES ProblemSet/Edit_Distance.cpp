@@ -97,10 +97,9 @@ T min4(T a, T b, T c, T d)
 */
 void solve()
 {
-    int n, m;
-    cin >> n >> m;
     string s, t;
     cin >> s >> t;
+    int n,m;
     n = s.size();
     m = t.size();
     vvi dp(n + 1, vi(m + 1, 1e9));
@@ -115,10 +114,9 @@ void solve()
         {
             if (s[i] == t[j])
                 dp[i + 1][j + 1] = dp[i][j];
-            dp[i + 1][j + 1] = min(dp[i + 1][j + 1], min(dp[i + 1][j], dp[i][j + 1]) + 1);
+            dp[i + 1][j + 1] = min(dp[i + 1][j + 1], min3(dp[i + 1][j], dp[i][j + 1],dp[i][j]) + 1);
         }
     }
-    debug(dp);
     cout << dp[n][m] << endl;
 }
 /*
@@ -133,9 +131,7 @@ int main()
 {
     ios::sync_with_stdio(0);
     cin.tie(0);
-#ifndef ONLINE_JUDGE
-    freopen("./0_Error.txt", "w", stderr);
-#endif
+
     int testCases = 1;
     // cin >> testCases;
     fo(tt, testCases)
