@@ -1,0 +1,168 @@
+Graph Algorithms
+
+-- Counting Rooms
+(1000 - BFS on a grid)
+
+-- Labyrinth
+(1200 - Similar to above + Implementation more)
+
+-- Building Roads
+(1400 - Some Data Structure - think what to use)
+
+-- Message Route
+(1400 - Graph Traversal)
+
+-- Building Teams
+(1500 - Graph Traversal)
+
+-- Round Trip
+(1400 - Graph Traversal, cycle search)
+
+-- Monsters
+(1700 - Graph Traversal, BFS)
+In this question, think of if you are starting with a BFS, can you have multiple nodes in the queue at the starting time. I took a lot of time on this question for first time.
+
+-- Shortest Routes I
+(1400 - Straight Dijkstra)
+
+-- Shortest Routes II
+(1400 - Check graph size constrainsts, Floyd Warshall)
+(Rememeber the time complexity of different algos of Shortest distance)
+
+-- High Score   
+(1600 - Some smart move + Bellman Ford - think why?)
+
+-- Flight Discount
+(1600 - Dijsktra)
+(Some new category of question, you won't be able to solve it in the first time because this is a new approach)
+Think if this helps:
+- We create a graph that consists of 2n nodes arranged in two layers.
+- Each city is represented by two nodes.
+- Node i corresponds to city i before using the coupon, and node n+i corresponds to city i after using the coupon.
+- See how you will have edges between these nodes.
+- Answer is from node 1 to node n + n = 2n.
+
+-- Cycle Finding
+(1800 - Bellman Ford)
+(Part 1 checking if negative cycle exists, Part 2 finding the cycle)
+Part 1: nth iteration of Bellman Ford
+Part 2: Makes it tough
+Skip for now part 2, it is not that important.
+
+-- Flight Routes
+(1700 - Dijkstra)
+- See range for k, now rather than storing just the minimum distance on each node, can you store k minimum distances on each node?
+- Skip for now, it is not that important.
+
+-- Round Trip II
+(1600 - Graph Traversal)
+- Good DFS question, do the next course Schedule first but.
+
+-- Course Schedule
+(1600 - Graph Traversal)
+- Topological Sort
+
+-- Longest Flight Route
+(1800 - Graph Traversal)
+- We solve the problem by dynamic programming in a directed acyclic graph.
+- We start by formulating the problem recursively. Let's denote the length (in nodes) of the longest route from city x to city n by f(x).
+- Read the handbook chapter on Dynamic Programming on DAGs (Chp 16.2) - Very good concept to imagine any DP problem as a DAG problem and vice versa. Each DP state can be thought of as a node in the DAG, and the transitions between states as edges in the DAG.
+
+-- Game Routes
+(Same DP on DAGs as above)
+
+-- Investigation
+(Implementation Heavy.. 3 to 4 questions together, Dijkstra + DP on Graphs)
+
+-- Planets Queries I
+-- Planets Queries II
+-- Planets Cycles
+(Skip the above 3 questions for now, they are not that important, probably 1900+, even I couldn;t solve the querie 2, cyclces yet)
+
+-- Road Reparation
+(1500 - MST)
+
+-- Road Construction
+(1500 - Some Data Structure)
+
+-- Flight Routes Check
+(1700 - Only DFS but a bit tricky, smart work, multiple DFS)
+
+-- Planets and Kingdoms
+(1800 - SCC + Kosaraju's Algorithm, Implementation but easy)
+
+-- Giant Pizza
+(1900 - 2 SAT problem handbook - 17.2 Handbook -- Implementation heavyyyy)
+Can skip for now, but can be good just to improve your implementation skills.
+
+-- Coin Collector
+(1900 - Kosaraju + DP)
+Can skip for now
+
+-- Mail Delivery
+-- De Bruijn Sequence
+-- Teleporters Path
+-- Hamiltonian Flights
+-- Knight's Tour
+(All 5 use some algos not relevant for interview preparation, can skip for now)
+(If interested read chapter 19 in handbook)
+
+-- Download Speed
+-- Police Chase
+-- School Dance
+-- Distinct Routes
+(All 4 ford-fulkerson, can skip for now)
+
+
+Trees CSES
+- This is very hard in CSES, most questions above 1500 rating and can go beyond 2100 or 2400 rating.
+
+Tree Algorithms
+-- Subordinates
+(DFS + DP)
+- In case of trees, think how you can feel dfs and dp in the same sense.
+- A bit of standard DFS,DP question. Learn if not able to solve it.
+
+-- Tree Matching
+(1800)
+A bit of hint from Analysis:
+- This problem can also be solved using depth-first search. Having a deep understanding of the DFS algorithm is crucial in many tree-related problems.
+- We will root the tree at vertex 1 and, in each node, construct the answer from the answers of the node's children using dynamic programming.
+
+-- Tree Diameter
+(Midsem problem)
+(1500 - DFS twice)
+
+-- Tree Distances I
+(1600 - DFS twice)
+- Important property: The maximum distance of any node is always from any end of the diameter. So if diameter is AB, then for any node C, the maximum distance is max(distance(C,A), distance(C,B)).
+- Prove this property
+- Rest extension of the previous problem
+
+-- Tree Distances II
+(1700 - DFS)
+- Learn this, not that relavant for interviews but good to learn.
+- Hard to think in first try ever
+- Ans = sum( subtree[i]*(n-subtree[i]) for all i )
+- Try to feel this property, just a way to count how many times a particular edge is used in the path between all pairs of nodes and adding them up.
+- Try with hand thoda
+
+-- Company Queries I
+-- Company Queries II
+-- Distance Queries
+-- Counting Paths
+(Read the concept of Binaray lifting though once)
+(Binary Lifting, LCA problems, irrelevant for interviews, can skip for now)
+(Section 18.1 to 18.3 in Handbook)
+
+-- Subtree Queries (Segment Tree, Skip)
+-- Path Queries (Segment Tree, Skip)
+-- Path Queries II (ICPC only)
+-- Distinct Colors (ICPC only)
+
+-- Finding a Centroid 
+(1800 - DFS)
+- can give a try, but not that important
+
+-- Fixed-Length Paths I (ICPC only)
+-- Fixed-Length Paths II (ICPC only)
