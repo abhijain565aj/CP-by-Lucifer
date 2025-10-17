@@ -61,16 +61,23 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
-void solve() {
-}
-
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
-  cin >> testCases;
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n;
+  cin >> n;
+  vector<ld> a(n + 2);
+  fo(i, n) cin >> a[i + 1];
+  a.back() = a[0] = 0;
+  v(ld) dp1(n + 1), dp2(n + 1), dp3(n + 1);
+  dp1[1] = a[1], dp2[1] = a[1], dp3[1] = a[1];
+  fo1(i, 2, n + 1) {
+    dp1[i] = (dp1[i - 1] + a[i - 1] * (1 - a[i - 2]) + 1 - a[i - 1]) * a[i];
+    dp2[i] = dp2[i - 1] * a[i] + dp1[i];
+    dp3[i] = dp3[i - 1] * a[i] + dp2[i];
   }
+  debug(dp1, dp2, dp3);
+  ld ans = 0;
+  fo1(i, 1, n + 1) ans += dp3[i] * (1 - a[i + 1]);
+  cout << fixed << setprecision(10) << ans << endl;
 }

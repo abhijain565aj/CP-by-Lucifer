@@ -62,6 +62,32 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  auto win = [&](bool first) {
+    cout << (first ? "Mimo" : "Yuyu") << endl;
+  };
+  int n, m, k;
+  cin >> n >> m >> k;
+  map<int, int> a;
+  fo(i, k) {
+    int x, y;
+    cin >> x >> y;
+    if (y == 1) continue;
+    a[y - 1]++;
+  }
+  if (m == 1) {
+    win(false);
+    return;
+  } else if (n == 1) {
+    win(a[1] & 1);
+    return;
+  } else {
+    for (auto& [_, val] : a)
+      if (val & 1) {
+        win(true);
+        return;
+      }
+    win(false);
+  }
 }
 
 signed main() {

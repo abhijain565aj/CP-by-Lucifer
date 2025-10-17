@@ -62,6 +62,30 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(2 * n);
+  read(a, 2 * n);
+  vi pref(2 * n), suff(2 * n);
+  pref[0] = a[0];
+  fo1(i, 1, 2 * n) pref[i] = pref[i - 1] + a[i];
+  suff[0] = a[2 * n - 1];
+  fo1(i, 1, 2 * n) suff[i] = suff[i - 1] + a[2 * n - 1 - i];
+  vi alt(2 * n);
+  alt[0] = a[0];
+  fo1(i, 1, 2 * n) alt[i] = alt[i - 1] + (i % 2 == 0 ? a[i] : -a[i]);
+  debug(pref);
+  debug(suff);
+  debug(alt);
+  fo(i, n) {
+    int ans = suff[i] - pref[i];
+    if (i % 2 == 0)
+      ans -= alt[2 * n - 2 - i] - alt[i];
+    else
+      ans += alt[2 * n - 2 - i] - alt[i];
+    cout << ans << " ";
+  }
+  cout << endl;
 }
 
 signed main() {

@@ -62,6 +62,36 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  int SUM = accumulate(all(a), 0LL);
+  auto fn = [&](int x) -> pair<bool, int> {
+    debug(x);
+    auto b = a;
+    int sum = SUM;
+    for (int i = 0; sum > x * n; i = (i + 1) % n) {
+      int diff = (b[i] - x + 1) / 2;
+      if (diff <= 0)
+        continue;
+      sum -= diff;
+      b[i] -= diff * 2;
+      b[(i + 1) % n] += diff;
+    }
+    fo(i, n) if (b[i] != x) return {false, -1};
+    return {true, SUM - x * n};
+  };
+  int l = 1, r = *max_element(all(a));
+  while (l < r) {
+    int mid = (l + r + 1) >> 1;
+    if (fn(mid).F) {
+      l = mid;
+    } else {
+      r = mid - 1;
+    }
+  }
+  cout << fn(l).S << endl;
 }
 
 signed main() {

@@ -62,6 +62,24 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, m;
+  cin >> n >> m;
+  vi a(m);
+  read(a, m);
+  vvi cont;
+  cont.pb({a[0]});
+  fo1(i, 1, m) {
+    if (a[i] == a[i - 1] + 1) {
+      cont.back().pb(a[i]);
+    } else if (a[i] == 1) {
+      cont.pb({a[i]});
+    }
+  }
+  if (cont.size() == 1) {
+    cout << max(0ll, n - cont.back().back() + 1) << endl;
+  } else {
+    cout << 1 << endl;
+  }
 }
 
 signed main() {

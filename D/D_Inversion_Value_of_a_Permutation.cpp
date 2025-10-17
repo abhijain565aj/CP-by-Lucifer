@@ -60,8 +60,52 @@ typedef long double ld;
 constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
-
 void solve() {
+  int n, k;
+  cin >> n >> k;
+  k = (n * (n - 1)) / 2 - k;
+  debug(k);
+  vi tri(n + 1);
+  tri[0] = 0;
+  fo1(i, 1, n + 1) tri[i] = tri[i - 1] + i;
+  int mx = (n * (n - 1)) / 2;
+  v(pii) poss(mx + 1, {INF, -1});
+  poss[0] = {0, -1};
+  re(i, n + 1) {
+    fo1(j, tri[i], mx + 1) {
+      poss[j].F = min(poss[j].F, poss[j - tri[i]].F + i + 1);
+      if (poss[j].F == poss[j - tri[i]].F + i + 1) poss[j].S = i;
+    }
+  }
+
+  // express k as sum of triangular numbers
+  vi ans;
+  while (k > 0) {
+    int idx = poss[k].S;
+    ans.pb(idx + 1);
+    k -= tri[idx];
+  }
+  debug(ans);
+  int curr = 0;
+  vvi res;
+  for (auto x : ans) {
+    vi temp;
+    fo(i, x) temp.pb(curr + i);
+    curr += x;
+    res.pb(temp);
+  }
+  if (curr > n) {
+    cout << 0 << endl;
+    return;
+  }
+  res.pb({});
+  while (curr < n) res.back().pb(curr++);
+  reverse(all(res.back()));
+  reverse(all(res));
+  for (auto& x : res) {
+    for (auto y : x) cout << y + 1 << " ";
+  }
+  cout << endl;
 }
 
 signed main() {

@@ -1,3 +1,4 @@
+// B87678
 // Solution by Abhi Jain aka Lucifer aka abhijain565aj
 #pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
@@ -61,13 +62,51 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
+vi prime(N, true);
+vi P;
 void solve() {
+  int n, k;
+  cin >> n >> k;
+  vi a(n);
+  read(a, n);
+  int val = 1;
+  for (auto x : P) {
+    if (k % x) {
+      val = x;
+      break;
+    }
+  }
+  debug(val);
+  int gcd = __gcd(a[0], a[1]);
+  for (int i = 2; i < n; i++) {
+    gcd = __gcd(gcd, a[i]);
+  }
+  if (gcd > 1) {
+    print_space(a, n);
+    return;
+  }
+  fo(i, n) {
+    while (a[i] % val != 0) {
+      a[i] += k;
+      debug(a[i]);
+    }
+  }
+  print_space(a, n);
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  prime[1] = prime[0] = false;
+  for (int i = 2; i < N; i++) {
+    if (prime[i]) {
+      for (int j = 2 * i; j < N; j += i) prime[j] = false;
+    }
+  }
+  for (int i = 2; i < N; i++) {
+    if (prime[i]) P.push_back(i);
+  }
+  int testCases = 1;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);

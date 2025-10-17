@@ -62,6 +62,49 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, m;
+  cin >> n >> m;
+  string s;
+  cin >> s;
+  vi a(m);
+  read(a, m);
+  set<int> st;
+  fo(i, m) st.insert(a[i]);
+  vi answer;
+  int current = 1;
+  if (*st.begin() == current) {
+    answer.pb(current);
+    st.erase(st.begin());
+  }
+  fo(i, n) {
+    if (s[i] == 'A') {
+      current++;
+      answer.pb(current);
+      if (!st.empty() && *st.begin() == current) {
+        st.erase(st.begin());
+      }
+    } else {
+      current++;
+      while (!st.empty() && *st.begin() == current) {
+        answer.pb(current);
+        st.erase(st.begin());
+        current++;
+      }
+      answer.pb(current);
+      current++;
+      while (!st.empty() && *st.begin() == current) {
+        answer.pb(current);
+        st.erase(st.begin());
+        current++;
+      }
+    }
+  }
+  while (!st.empty()) {
+    answer.pb(*st.begin());
+    st.erase(st.begin());
+  }
+  cout << answer.size() << endl;
+  print_space(answer, (int)answer.size());
 }
 
 signed main() {

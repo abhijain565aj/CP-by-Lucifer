@@ -62,6 +62,10 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int a, b, d;
+  cin >> a >> b >> d;
+  int mod1 = a % d;
+  int mod2 = b % d;
 }
 
 signed main() {

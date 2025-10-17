@@ -62,6 +62,44 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  string s;
+  cin >> s;
+  vi a(n);
+  int curr = 0;
+  fo(i, n) {
+    curr += (s[i] == 'a' ? 1 : -1);
+    a[i] = curr;
+  }
+  vi b(n);
+  curr = 0;
+  multiset<pii> st;
+  re(i, n) {
+    curr += (s[i] == 'b' ? 1 : -1);
+    b[i] = curr;
+    st.insert({b[i], i});
+  }
+  st.insert({0, n});
+  debug(a);
+  debug(b);
+  int ans = n;
+  auto lb = st.lower_bound({0, -1});
+  if (lb != st.end()) {
+    ans = min(ans, lb->S);
+  }
+  fo(i, n) {
+    st.erase({b[i], i});
+    auto lb = st.lower_bound({a[i], -1});
+    if (lb == st.end()) continue;
+    debug(*lb);
+    if (lb->F != a[i]) continue;
+    ans = min(ans, lb->S - i - 1);
+  }
+  if (ans == n)
+    cout << -1 << endl;
+  else
+    cout << ans << endl;
 }
 
 signed main() {

@@ -62,6 +62,47 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, m, q;
+  cin >> n >> m >> q;
+  vi a(n + 1);
+  fo(i, n) cin >> a[i + 1];
+  vi fac_m;
+  for (int i = 1; i * i <= m; i++) {
+    if (m % i == 0) {
+      fac_m.pb(i);
+      if (i != m / i) fac_m.pb(m / i);
+    }
+  }
+  sortall(fac_m);
+  map<int, int> mp;
+  for (int f : fac_m) {
+    fo(i, n) {
+      mp[f] += ((a[i + 1] - a[i]) % f + f) % f;
+    }
+  }
+  while (q--) {
+    int x;
+    cin >> x;
+    if (x == 1) {
+      int i, v;
+      cin >> i >> v;
+      for (int f : fac_m) {
+        mp[f] -= ((a[i] - a[i - 1]) % f + f) % f;
+        if (i + 1 <= n) mp[f] -= ((a[i + 1] - a[i]) % f + f) % f;
+      }
+      a[i] = v;
+      for (int f : fac_m) {
+        mp[f] += ((a[i] - a[i - 1]) % f + f) % f;
+        if (i + 1 <= n) mp[f] += ((a[i + 1] - a[i]) % f + f) % f;
+      }
+    } else {
+      int k;
+      cin >> k;
+      int g = __gcd(m, k);
+      debug(k, g, a, mp[g]);
+      YN(mp[g] < m);
+    }
+  }
 }
 
 signed main() {

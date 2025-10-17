@@ -61,16 +61,24 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
-void solve() {
-}
-
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
-  cin >> testCases;
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  int inv = 0;
+  fo(i, n) {
+    fo1(j, i + 1, n) {
+      if (a[i] > a[j]) inv++;
+    }
   }
+  vi dp(inv + 1);
+  dp[0] = 0;
+  dp[1] = 1;
+  fo1(i, 2, inv + 1) {
+    dp[i] = 4 + dp[i - 2];
+  }
+  cout << dp[inv] << endl;
 }

@@ -1,3 +1,4 @@
+// B87678
 // Solution by Abhi Jain aka Lucifer aka abhijain565aj
 #pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
@@ -62,12 +63,22 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  sortall(a);
+  int ans = 0;
+  fo(i, n) {
+    if (i % 2 != n % 2) ans += a[i];
+  }
+  cout << ans << endl;
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  int testCases = 1;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);

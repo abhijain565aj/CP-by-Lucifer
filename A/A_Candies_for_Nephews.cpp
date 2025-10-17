@@ -62,6 +62,12 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  if (n % 3 == 0)
+    cout << 0 << endl;
+  else
+    cout << 3 - n % 3 << endl;
 }
 
 signed main() {

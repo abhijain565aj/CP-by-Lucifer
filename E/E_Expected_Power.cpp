@@ -61,7 +61,65 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
+// Modular Arithmetic
+ll mod(ll a, ll m = MOD) {
+  return (a % m + m) % m;
+}
+ll add(ll a, ll b, ll m = MOD) {
+  return mod(a + b, m);
+}
+ll sub(ll a, ll b, ll m = MOD) {
+  return mod(a - b, m);
+}
+ll mul(ll a, ll b, ll m = MOD) {
+  return mod(a * b, m);
+}
+ll power(ll a, ll b, ll m = MOD) {
+  ll res = 1;
+  while (b) {
+    if (b & 1)
+      res = mul(res, a, m);
+    a = mul(a, a, m);
+    b >>= 1;
+  }
+  return res;
+}
+ll inv(ll a, ll m = MOD) {
+  return power(a, m - 2, m);
+}
+ll divide(ll a, ll b, ll m = MOD) {
+  return mul(a, inv(b, m), m);
+}
+
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  vi pr(n);
+  read(pr, n);
+  fo(i, n) pr[i] = divide(pr[i], 1e4);
+  int sz = 1 << 10;
+  vi dp(sz);
+  fo(i, n) {
+    if (i == 0) {
+      dp[a[i]] = pr[i];
+      dp[0] = sub(1, pr[i]);
+      continue;
+    }
+    auto v = dp;
+    dp.assign(sz, 0);
+    fo(j, sz) {
+      dp[j ^ a[i]] = add(dp[j ^ a[i]], mul(v[j], pr[i]));
+      dp[j] = add(dp[j], mul(v[j], sub(1, pr[i])));
+    }
+    debug(dp);
+  }
+  auto ans = 0;
+  fo(i, 1024) {
+    ans = add(ans, mul(i * i, dp[i]));
+  }
+  cout << ans << endl;
 }
 
 signed main() {

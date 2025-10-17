@@ -62,11 +62,35 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, m;
+  cin >> n >> m;
+  vvi a(n);
+  map<int, vi> mp;
+  fo(i, n) {
+    int k;
+    cin >> k;
+    a[i].resize(k);
+    fo(j, k) {
+      cin >> a[i][j];
+      mp[a[i][j]].push_back(i);
+    }
+  }
+  debug(mp);
+  vi p(n, false);
+  for (auto [x, y] : mp) {
+    if (y.size() == 1) p[y[0]] = true;
+  }
+  int cnt = 0;
+  fo(i, n) if (!p[i]) cnt++;
+  bool possible = true;
+  if (cnt < 2) possible = false;
+  for (int i = 1; i <= m; i++)
+    if (mp.find(i) == mp.end()) possible = false;
+  YN(possible);
 }
 
 signed main() {
   fastio;
-  //   Error_file("0_Error.txt");
   int testCases = 1000;
   cin >> testCases;
   fo(tt, testCases) {

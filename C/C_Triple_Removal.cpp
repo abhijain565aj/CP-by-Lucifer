@@ -62,6 +62,36 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, q;
+  cin >> n >> q;
+  vi a(n);
+  read(a, n);
+  vi pfsum(n);
+  pfsum[0] = a[0];
+  fo1(i, 1, n) pfsum[i] = a[i] + pfsum[i - 1];
+  vi b(n);
+  int ind = -1;
+  b[0] = -1;
+  fo1(i, 1, n) {
+    if (a[i - 1] == a[i]) ind = i - 1;
+    b[i] = ind;
+  }
+  fo(i, q) {
+    int l, r;
+    cin >> l >> r;
+    l--, r--;
+    int ones = pfsum[r] - ((l > 0) ? pfsum[l - 1] : 0);
+    debug(ones);
+    if ((r - l + 1) % 3 || ones % 3) {
+      cout << -1 << "\n";
+      continue;
+    }
+    int ans = (r - l + 1) / 3;
+    if (b[r] < l) {
+      ans += 1;
+    }
+    cout << ans << "\n";
+  }
 }
 
 signed main() {

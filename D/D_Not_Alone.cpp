@@ -62,6 +62,44 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  a.pb(a[0]);
+  a.pb(a[1]);
+  debug(a);
+  vi dp(n + 2, -1);
+  int type = 0;
+  auto fn = [&](auto&& fn, int i) -> int {
+    if (i >= n + type) return 0;
+    if (dp[i] != -1) return dp[i];
+    if (i == n - 1 + type) return INF;
+    // either make i, i+1, i+2 same or make i, i+1 same and add extra..
+    int cost1 = fn(fn, i + 2) + abs(a[i] - a[i + 1]);
+    int cost2 = INF;
+    if (i != n - 2 + type) {
+      vi temp = {a[i], a[i + 1], a[i + 2]};
+      sortall(temp);
+      debug(i, temp);
+      cost2 = temp[2] - temp[0] + fn(fn, i + 3);
+    }
+    debug(i, cost1, cost2);
+    dp[i] = min(cost1, cost2);
+    return dp[i];
+  };
+  type = 0;
+  int ans = fn(fn, 0);
+  debug(dp);
+  type = 1;
+  dp.assign(n + 2, -1);
+  ans = min(ans, fn(fn, 1));
+  debug(dp);
+  type = 2;
+  dp.assign(n + 2, -1);
+  ans = min(ans, fn(fn, 2));
+  debug(dp);
+  cout << ans << endl;
 }
 
 signed main() {

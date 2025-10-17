@@ -60,17 +60,61 @@ typedef long double ld;
 constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
-
+int Limit = 1;
+int ask1(vi& v) {
+  int c = 1;
+  int l = 0;
+  fo(i, v.size()) {
+    if (v[i] + l > Limit) {
+      l = v[i];
+      c++;
+    } else {
+      l += v[i];
+    }
+    if (v[i] > Limit) return 0;
+  }
+  return c;
+}
 void solve() {
+  auto ask = [&](vi& v) -> int {
+    cout << "? " << v.size() << " ";
+    for (auto& x : v) cout << x << " ";
+    cout << endl;
+    int res;
+    cin >> res;
+    return res;
+  };
+  auto ans = [&](int v) -> void {
+    cout << "! " << v << endl;
+    // if (v != Limit) {
+    //   debug(Limit, v);
+    // }
+  };
+  int n = 1e5;
+  vi a(n);
+  fo(i, n) a[i] = 1;
+  map<int, vi> mp;
+  fo1(i, 1, n + 1) {
+    mp[(n + i - 1) / i].pb(i);
+  }
+  auto& v = mp[ask(a)];
+  vi b;
+  for (int i = 1; i <= v.size(); i++) {
+    b.pb(v[0]);
+    b.pb(i);
+  }
+  int res = ask(b) - v.size();
+  ans(v[v.size() - res]);
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  int testCases = 1e5;
   cin >> testCases;
   fo(tt, testCases) {
-    Test(tt + 1);
+    // Test(tt + 1);
     solve();
+    // Limit++;
   }
 }

@@ -62,6 +62,33 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, k;
+  cin >> n >> k;
+  string s;
+  cin >> s;
+  if (k == n) {
+    cout << string(n, '-') << endl;
+    return;
+  }
+  string ans = "";
+  fo(i, n) ans += "+";
+  int lp = 0;
+  int rp = n - 1;
+  int qu = 0;
+  fo(i, k) {
+    if (s[i] == '0')
+      ans[lp++] = '-';
+    else if (s[i] == '1')
+      ans[rp--] = '-';
+    else {
+      qu++;
+    }
+  }
+  fo(i, qu) {
+    ans[lp++] = '?';
+    ans[rp--] = '?';
+  }
+  cout << ans << endl;
 }
 
 signed main() {

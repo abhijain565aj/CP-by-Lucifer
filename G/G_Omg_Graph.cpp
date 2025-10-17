@@ -62,6 +62,47 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, m;
+  cin >> n >> m;
+  v(v(pii)) adj(n);
+  vector<array<int, 3>> edges(m);
+  fo(i, m) {
+    int u, v, w;
+    cin >> u >> v >> w;
+    u--, v--;
+    edges[i] = {u, v, w};
+    adj[u].pb({v, w});
+    adj[v].pb({u, w});
+  }
+  auto fn = [&](int src) -> vi {
+    priority_queue<pii, v(pii), greater<pii>> pq;
+    vi dist(n, INF);
+    dist[src] = 0;
+    pq.push({0, src});
+    while (!pq.empty()) {
+      auto [d, u] = pq.top();
+      pq.pop();
+      if (d > dist[u]) continue;
+      for (auto [v, w] : adj[u]) {
+        if (dist[v] > max(dist[u], w)) {
+          dist[v] = max(dist[u], w);
+          pq.push({dist[v], v});
+        }
+      }
+    }
+    return dist;
+  };
+  vi dist1 = fn(0);
+  vi distn = fn(n - 1);
+  debug(dist1, distn);
+  int ans = INF;
+  for (auto [u, v, w] : edges) {
+    if (w <= max(dist1[u], distn[v]))
+      ans = min(ans, max(dist1[u], distn[v]) + w);
+    if (w <= max(dist1[v], distn[u]))
+      ans = min(ans, max(dist1[v], distn[u]) + w);
+  }
+  cout << ans << endl;
 }
 
 signed main() {

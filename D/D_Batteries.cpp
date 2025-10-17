@@ -62,6 +62,24 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  set<pii> s;
+  auto query = [&](int x, int y) -> int {
+    if (x > y) swap(x, y);
+    if (x == y) return -1;
+    if (s.count({x, y})) return -1;
+    s.insert({x, y});
+    cout << x + 1 << " " << y + 1 << endl;
+    int res;
+    cin >> res;
+    return res;
+  };
+  fo1(len, 1, n) {
+    fo(i, n) {
+      if (query(i, (i + len) % n) == 1) return;
+    }
+  }
 }
 
 signed main() {

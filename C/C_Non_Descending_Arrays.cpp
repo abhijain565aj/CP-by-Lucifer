@@ -57,11 +57,25 @@ typedef long double ld;
 #define print_space(a, n) \
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
-constexpr int MOD = 1000000007;
+constexpr int MOD = 998244353;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  vi b(n);
+  read(b, n);
+  int ans = 2;
+  fo(i, n - 1) {
+    if (max(a[i], b[i]) <= min(a[i + 1], b[i + 1])) {
+      ans *= 2;
+      ans %= MOD;
+    }
+  }
+  cout << ans << endl;
 }
 
 signed main() {

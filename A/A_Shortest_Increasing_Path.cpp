@@ -62,6 +62,17 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int x, y;
+  cin >> x >> y;
+  if (y == 1) {
+    cout << -1 << endl;
+  } else if (x >= y + 2) {
+    cout << 3 << endl;
+  } else if (x >= y) {
+    cout << -1 << endl;
+  } else if (y > x) {
+    cout << 2 << endl;
+  }
 }
 
 signed main() {

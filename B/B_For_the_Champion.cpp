@@ -62,12 +62,40 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  auto ask = [&](string s, int k) -> int {
+    cout << "? " << s << " " << k << endl;
+    int v;
+    cin >> v;
+    return v;
+  };
+  int n;
+  cin >> n;
+  v(pii) V(n);
+  fo(i, n) cin >> V[i].F >> V[i].S;
+  pii A1 = V[0], A2 = V[0];
+  fo(i, n) if (V[i].F + V[i].S > A1.F + A1.S) A1 = V[i];
+  fo(i, n) if (V[i].F - V[i].S > A2.F - A2.S) A2 = V[i];
+  auto [a, b] = A1;
+  auto [c, d] = A2;
+  int mx = 1e9;
+  ask("R", mx);
+  ask("R", mx);
+  ask("U", mx);
+  int v1 = ask("U", mx);
+  ask("D", mx);
+  ask("D", mx);
+  ask("D", mx);
+  int v2 = ask("D", mx);
+
+  int z1 = v1 + a + b - 4 * mx;
+  int z2 = v2 + c - d - 4 * mx;
+  cout << "! " << (z1 + z2) / 2 << " " << (z1 - z2) / 2 << endl;
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  int testCases = 1;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);

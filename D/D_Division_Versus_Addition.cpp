@@ -62,6 +62,50 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, q;
+  cin >> n >> q;
+  vi a(n);
+  read(a, n);
+  vi logs(n);
+  vi b(n);
+
+  auto check = [&](int y) -> int {
+    int ans = 0;
+    while (y > 1) {
+      if (y & 1) y++;
+      y /= 2;
+      ans++;
+    }
+    return ans;
+  };
+
+  fo(i, n) {
+    logs[i] = check(a[i]);
+    b[i] = logs[i] != (check(a[i] / 2) + 1);
+  }
+
+  debug(b);
+  debug(logs);
+
+  vi pfsum_logs(n);
+  pfsum_logs[0] = logs[0];
+  fo1(i, 1, n) pfsum_logs[i] = logs[i] + pfsum_logs[i - 1];
+
+  vi pfsum_b(n);
+  pfsum_b[0] = b[0];
+  fo1(i, 1, n) pfsum_b[i] = b[i] + pfsum_b[i - 1];
+
+  fo(i, q) {
+    int l, r;
+    cin >> l >> r;
+    l--, r--;
+    int total_logs = pfsum_logs[r] - ((l > 0) ? pfsum_logs[l - 1] : 0);
+    int total_b = pfsum_b[r] - ((l > 0) ? pfsum_b[l - 1] : 0);
+    debug(total_b);
+    int ans = total_logs;
+    ans -= (total_b + 1) / 2;
+    cout << ans << "\n";
+  }
 }
 
 signed main() {

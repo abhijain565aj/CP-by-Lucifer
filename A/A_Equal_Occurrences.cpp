@@ -62,6 +62,22 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  map<int, int> mp;
+  fo(i, n) mp[a[i]]++;
+  v(pii) b;
+  for (auto x : mp) b.pb({x.S, x.F});
+  sortall(b);
+  int ans = 0;
+  int m = b.size();
+  for (auto [x, y] : b) {
+    ans = max(ans, x * m);
+    m--;
+  }
+  cout << ans << endl;
 }
 
 signed main() {

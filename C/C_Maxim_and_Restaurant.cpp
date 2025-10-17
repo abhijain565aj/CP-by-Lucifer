@@ -37,7 +37,7 @@ typedef long double ld;
 #define fo(i, n) for (decltype(n) i = 0; i < n; i++)
 #define re(i, n) for (decltype(n) i = n - 1; i >= 0; i--)
 #define fo1(i, a, b) for (decltype(b) i = a; i < b; i++)
-#define re1(i, a, b) for (decltype(a) i = a; i >= b; i--)
+#define re1(i, a, b) for (decltype(a) i = a - 1; i >= b; i--)
 
 #define YN(possible) cout << ((possible) ? "YES" : "NO") << endl;
 #define all(x) (x).begin(), (x).end()
@@ -61,16 +61,35 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
-void solve() {
-}
-
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
-  cin >> testCases;
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  int p;
+  cin >> p;
+  vvi S(accumulate(all(a), 1LL), vi(a.size() + 1));
+  S[0][0] = 1;
+  fo(i, a.size()) {
+    re1(j, (int)S.size(), a[i]) {
+      fo1(k, 1, a.size() + 1) {
+        if (j - a[i] <= p)
+          S[j][k] += S[j - a[i]][k - 1];
+      }
+    }
   }
+  v(ld) lg(a.size() + 1);
+  fo1(i, p + 1, (int)S.size()) {
+    fo(j, a.size() + 1) lg[j] += S[i][j];
+  }
+  ld fac = 1;
+  ld ans = 0;
+  fo1(i, 1, a.size() + 1) {
+    fac *= i;
+    ans += (lg[i] * (i - 1)) / fac;
+  }
+  debug(lg);
+  cout << fixed << setprecision(10) << ans << endl;
 }

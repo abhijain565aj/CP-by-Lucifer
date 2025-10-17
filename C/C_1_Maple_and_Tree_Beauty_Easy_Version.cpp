@@ -62,6 +62,49 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, k;
+  cin >> n >> k;
+  vi p(n);
+  read(p, n - 1);
+  vvi adj(n);
+  fo(i, n - 1) {
+    p[i]--;
+    adj[p[i]].push_back(i + 1);
+  }
+  vi dis(n, -1);
+  dis[0] = 0;
+  auto dfs = [&](auto&& dfs, int n1) -> void {
+    for (auto x : adj[n1]) {
+      dis[x] = dis[n1] + 1;
+      dfs(dfs, x);
+    }
+  };
+  dfs(dfs, 0);
+  int maxAns = n;
+  fo(i, n) if (adj[i].size() == 0) maxAns = min(maxAns, dis[i] + 1);
+  vi level(maxAns, 0);
+  int margin = 0;
+  fo(i, n) {
+    if (dis[i] < maxAns)
+      level[dis[i]]++;
+    else
+      margin++;
+  }
+  vb Sum(n + 1, false);
+  Sum[0] = true;
+  fo(i, maxAns) {
+    for (int j = n; j >= level[i]; j--) {
+      Sum[j] = Sum[j] || Sum[j - level[i]];
+    }
+  }
+  for (int i = k; i >= k - margin; i--) {
+    if (Sum[i]) {
+      cout << maxAns << "\n";
+      return;
+    }
+  }
+  cout << maxAns - 1 << "\n";
+  return;
 }
 
 signed main() {

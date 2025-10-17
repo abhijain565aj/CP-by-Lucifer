@@ -25,7 +25,6 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 #define int long long
 typedef long long ll;
-typedef long double ld;
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -62,12 +61,27 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  fo(i,n){
+    if(i%2){
+      a[i] = 3;
+    }
+    else{
+        a[i] = -1;
+    }
+  }
+  if(a.back() == 3){
+      a.back() = 2;
+  }
+  print_space(a, a.size());
 }
 
 signed main() {
   fastio;
-  //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  Error_file("0_Error.txt");
+  int testCases = 1;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);

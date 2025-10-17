@@ -25,7 +25,7 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 #define int long long
 typedef long long ll;
-typedef long double ld;
+#define ld long double
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -61,16 +61,34 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
-void solve() {
-}
-
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
-  cin >> testCases;
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
-  }
+  int w, b;
+  cin >> w >> b;
+  v(v(v(ld))) dp(w + 1, v(v(ld))(b + 1, v(ld)(2, -1)));
+  // 0 - princess 1 - dragon
+  auto fn = [&](auto&& fn, int i, int j, int k) -> long double {
+    if (dp[i][j][k] >= 0) return dp[i][j][k];
+    ld i1 = i, j1 = j;
+    debug(i, j, k);
+    if (i == 0 && j >= 0) {
+      dp[i][j] = {0, 1};
+      return dp[i][j][k];
+    }
+    if (i > 0 && j == 0) {
+      dp[i][j] = {1, 1};
+      return dp[i][j][k];
+    }
+    if (k == 0) {
+      dp[i][j][k] = i1 / (j1 + i1) + (j1 / (i1 + j1)) * (1.0 - fn(fn, i, j - 1, 1 - k));
+    } else if (k == 1) {
+      ld after = (j1 - 1.0) / (i1 + j1 - 1.0) * (1.0 - ((j > 1) ? fn(fn, i, j - 2, 0) : 1.0)) + i1 / (i1 + j1 - 1) * (1.0 - fn(fn, i - 1, j - 1, 0));
+      dp[i][j][1] = i1 / (i1 + j1) + (j1 / (i1 + j1)) * after;
+    }
+    debug(i, j, k, dp[i][j][k]);
+    return dp[i][j][k];
+  };
+  cout << fixed << setprecision(12) << fn(fn, w, b, 0) << endl;
+  debug(dp);
 }

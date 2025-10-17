@@ -25,7 +25,6 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 #define int long long
 typedef long long ll;
-typedef long double ld;
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -60,17 +59,50 @@ typedef long double ld;
 constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
-
-void solve() {
-}
+#define ld long double
 
 signed main() {
   fastio;
-  //   Error_file("0_Error.txt");
-  int testCases = 1000;
-  cin >> testCases;
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  Error_file("0_Error.txt");
+  int n, s;
+  cin >> n >> s;
+  map<int, int> mp;
+  vvi adj(n);
+  set<pair<int, int>> st;
+  bool possible = true && s % 2 == 0;
+  fo(i, n) {
+    cin >> mp[i];
+    if (mp[i]) st.insert({mp[i], i});
+    if (mp[i] > s / 2) possible = false;
+  }
+  while (!st.empty()) {
+    auto tp = *st.rbegin();
+    st.erase(tp);
+    if (tp.F > (ll)st.size()) {
+      possible = false;
+      break;
+    }
+    v(pii) v;
+    int cnt = 0;
+    while (cnt < tp.F) {
+      v.push_back(*st.rbegin());
+      st.erase(*st.rbegin());
+      cnt++;
+    }
+    for (auto [x, y] : v) {
+      adj[tp.S].push_back(y);
+      if (--x) st.insert({x, y});
+    }
+  }
+  if (!possible) {
+    cout << "No" << endl;
+    return 0;
+  }
+  cout << "Yes" << endl;
+  cout << s / 2 << endl;
+  fo(i, n) {
+    for (auto x : adj[i]) {
+      cout << i + 1 << " " << x + 1 << "\n";
+    }
   }
 }

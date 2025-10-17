@@ -57,7 +57,7 @@ typedef long double lld;
         else                      \
             cout << a[i] << ' ';
 #ifndef ONLINE_JUDGE
-#include "D:/CodeForces/0_debug.cpp"
+#include "./0_debug.cpp"
 #else
 #define debug(x)
 #define debug2(x, y)
@@ -95,42 +95,75 @@ T min4(T a, T b, T c, T d)
 |  / ____ \  | |_) | | |  | |  _| |_      \__ \   | |____  | |__| | | |__| | | |____  |
 | /_/    \_\ |____/  |_|  |_| |_____|     |___/    \_____|  \____/  |_____/  |______| |
 */
+struct Trienode
+{
+    bool isEnd;
+    unordered_map<char, Trienode *> children;
+    Trienode()
+    {
+        isEnd = false;
+    }
+};
+struct Trie
+{
+    Trienode *root;
+    Trie()
+    {
+        root = new Trienode();
+    }
+    void insert(string word)
+    {
+        Trienode *node = root;
+        for (char c : word)
+        {
+            if (node->children.find(c) == node->children.end())
+                node->children[c] = new Trienode();
+            node = node->children[c];
+        }
+        node->isEnd = true;
+    }
+    vi countPrefix(const string &s, int start)
+    {
+        vi Prefixes;
+        Trienode *node = root;
+        int i = start;
+        for (int i = start; i < s.size(); i++)
+        {
+            if (node->children.find(s[i]) == node->children.end())
+                return Prefixes;
+            node = node->children[s[i]];
+            if (node->isEnd)
+                Prefixes.pb(i);
+        }
+        return Prefixes;
+    }
+};
+
 void solve()
 {
+    Trie trie;
     string s;
     cin >> s;
-    ll n;
-    cin >> n;
-    unordered_set<string> dict;
-    string s1;
-    fo(i, n)
+    int k;
+    cin >> k;
+    while (k--)
     {
-        cin >> s1;
-        dict.insert(s1);
+        string word;
+        cin >> word;
+        trie.insert(word);
     }
-    ll n1 = s.size();
-    vl dp(n1 + 1, -1);
-    dp[n1] = 1;
-    function<ll(ll)> dpsolve = [&](ll i) -> ll
+    vi dp(s.size() + 1, 0);
+    dp[s.size()] = 1;
+    for (int i = s.size() - 1; i >= 0; i--)
     {
-        if (dp[i] != -1)
+        vi Prefixes = trie.countPrefix(s, i);
+        for (int j : Prefixes)
         {
-            return dp[i];
+            dp[i] += dp[j + 1];
+            dp[i] %= MOD;
         }
-        ll ans = 0;
-        string s1 = "";
-        fo1(j, i, n1)
-        {
-            s1 += s[j];
-            if (dict.find(s1) != dict.end())
-            {
-                ans += dpsolve(j + 1);
-                ans %= MOD;
-            }
-        }
-        return dp[i] = ans;
-    };
-    cout << dpsolve(0) << endl;
+    }
+    cout << dp[0] << endl;
 }
 /*
 |   _____    ____    _____    ______     ______   _   _   _____     _____
@@ -145,7 +178,7 @@ int main()
     ios::sync_with_stdio(0);
     cin.tie(0);
 #ifndef ONLINE_JUDGE
-    freopen("D:/CodeForces/0_Error.txt", "w", stderr);
+    freopen("./0_Error.txt", "w", stderr);
 #endif
     int testCases = 1;
     // cin >> testCases;

@@ -25,7 +25,6 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 #define int long long
 typedef long long ll;
-typedef long double ld;
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -61,16 +60,38 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
-void solve() {
-}
-
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
-  cin >> testCases;
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n;
+  cin >> n;
+  vi a(n - 1);
+  read(a, n - 1);
+  vvi adj(n);
+  fo(i, n - 1) {
+    adj[a[i] - 1].pb(i + 1);
   }
+  vi subtree(n);
+  auto dfs = [&](auto &&dfs, int node) -> void {
+    subtree[node] = 1;
+    for (auto child : adj[node]) {
+      dfs(dfs, child);
+      subtree[node] += subtree[child];
+    }
+  };
+  dfs(dfs, 0);
+  vi expected_time(n, -1);
+  expected_time[0] = 2;
+  auto dfs2 = [&](auto &&dfs2, int node) -> void {
+    int total = subtree[node] - 1;
+    for (auto child : adj[node]) {
+      expected_time[child] = expected_time[node] + total - subtree[child] + 2;
+      dfs2(dfs2, child);
+    }
+  };
+  dfs2(dfs2, 0);
+  for (int i = 0; i < n; ++i) {
+    cout << ((long double)expected_time[i]) / 2 << " ";
+  }
+  cout << endl;
 }

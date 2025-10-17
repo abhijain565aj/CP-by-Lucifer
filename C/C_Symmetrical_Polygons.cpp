@@ -62,6 +62,58 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  sortall(a);
+  vi multiple;
+  vi single;
+  int i = 0;
+  for (i = 0; i < n; i++) {
+    if (i == n - 1) {
+      single.pb(a[i]);
+      break;
+    }
+    if (a[i] == a[i + 1])
+      multiple.pb(a[i]), i++;
+    else
+      single.pb(a[i]);
+  }
+
+  int sum = accumulate(all(multiple), 0LL);
+  debug(single, multiple);
+  if (multiple.size() == 0) {
+    cout << 0 << endl;
+    return;
+  }
+  if (single.size() == 0) {
+    if (multiple.size() <= 1) sum = 0;
+    cout << 2 * sum << endl;
+    return;
+  }
+  if (single.size() == 1) {
+    if (single[0] < 2 * sum) {
+      cout << 2 * sum + single[0] << endl;
+      return;
+    } else {
+      if (multiple.size() <= 1) sum = 0;
+      cout << 2 * sum << endl;
+      return;
+    }
+  }
+  debug(single, multiple, sum);
+  re1(i, single.size() - 1, 1) if (single[i] < 2 * sum + single[i - 1]) {
+    debug(i);
+    cout << 2 * sum + single[i] + single[i - 1] << endl;
+    return;
+  }
+  if (single[0] < 2 * sum) {
+    cout << 2 * sum + single[0] << endl;
+    return;
+  }
+  if (multiple.size() <= 1) sum = 0;
+  cout << 2 * sum << endl;
 }
 
 signed main() {

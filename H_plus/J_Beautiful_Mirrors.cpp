@@ -25,7 +25,6 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 #define int long long
 typedef long long ll;
-typedef long double ld;
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -57,20 +56,53 @@ typedef long double ld;
 #define print_space(a, n) \
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
-constexpr int MOD = 1000000007;
+constexpr int MOD = 998244353;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
-
-void solve() {
+// Modular Arithmetic
+ll mod(ll a, ll m = MOD) {
+  return (a % m + m) % m;
+}
+ll add(ll a, ll b, ll m = MOD) {
+  return mod(a + b, m);
+}
+ll sub(ll a, ll b, ll m = MOD) {
+  return mod(a - b, m);
+}
+ll mul(ll a, ll b, ll m = MOD) {
+  return mod(a * b, m);
+}
+ll power(ll a, ll b, ll m = MOD) {
+  ll res = 1;
+  while (b) {
+    if (b & 1)
+      res = mul(res, a, m);
+    a = mul(a, a, m);
+    b >>= 1;
+  }
+  return res;
+}
+ll inv(ll a, ll m = MOD) {
+  return power(a, m - 2, m);
+}
+ll divide(ll a, ll b, ll m = MOD) {
+  return mul(a, inv(b, m), m);
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
-  cin >> testCases;
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  int ans = 0;
+  int pr = 1;
+  fo(i, n) {
+    pr = divide(pr, 100);
+    int pr1 = mul(pr, 100 - a[i]);
+    ans = add(ans, mul(pr1, i + 1));
+    pr = mul(pr, a[i]);
   }
+  cout << divide(ans, pr) + n << endl;
 }

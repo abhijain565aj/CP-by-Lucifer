@@ -62,13 +62,43 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, q;
+  cin >> n >> q;
+  vi a(n);
+  read(a, n);
+  sortall(a);
+  a.pb(1e18);
+  int curr = -1;
+  v(pii) b;
+  fo(i, n + 1) {
+    if (a[i] != curr + 1) {
+      b.push_back({curr + 1, a[i] - curr - 1});
+    }
+    curr = a[i];
+  }
+  debug(b);
+  vi pre(b.size() + 1, 0);
+  pre.pb(2e18);
+  fo(i, b.size()) {
+    pre[i + 1] = pre[i] + b[i].S;
+  }
+  debug(pre);
+  while (q--) {
+    int ind;
+    cin >> ind;
+    ind--;
+    int pos = lower_bound(all(pre), ind) - pre.begin();
+    if (pre[pos] > ind) pos--;
+    debug(ind, pos);
+    cout << b[pos].F + (ind - pre[pos]) << " ";
+  }
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
-  cin >> testCases;
+  int testCases = 1;
+  // cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);
     solve();

@@ -60,13 +60,36 @@ typedef long double ld;
 constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
-
+int hardcode(vi a, vi ind, bool mx) {
+  if (a.size() == 1) return a[0];
+  int ans = mx ? -INF : INF;
+  for (auto i : ind) {
+    if (i < (int)a.size()) {
+      auto c = a;
+      c.erase(c.begin() + i);
+      if (mx)
+        ans = max(ans, hardcode(c, ind, !mx));
+      else
+        ans = min(ans, hardcode(c, ind, !mx));
+    }
+  }
+  return ans;
+}
 void solve() {
+  int n, m;
+  cin >> n >> m;
+  int k;
+  cin >> k;
+  vi a(k);
+  read(a, k);
+  vvi dp(1 << n, vi(2, -1));
+  
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
+  cout << hardcode({1, 2, 1, 2, 1, 1, 2}, {0, 3}, true);
   int testCases = 1000;
   cin >> testCases;
   fo(tt, testCases) {

@@ -62,6 +62,25 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, xk, yk, xd, yd;
+  cin >> n >> xk >> yk >> xd >> yd;
+  int diff1 = abs(xk - xd);
+  int diff2 = abs(yk - yd);
+  int v1 = 0, v2 = 0;
+  if (xd < xk)
+    v1 = n - xk;
+  else
+    v1 = xk;
+  if (yd < yk)
+    v2 = n - yk;
+  else
+    v2 = yk;
+  if (xd == xk) {
+    v1 = min(diff2, v1);
+  } else if (yd == yk) {
+    v2 = min(diff1, v2);
+  }
+  cout << max(v1 + diff1, v2 + diff2) << endl;
 }
 
 signed main() {

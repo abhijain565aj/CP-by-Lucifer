@@ -62,6 +62,32 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  int lp = 0;
+  set<int> s(all(a));
+  bool single_zero = ((int)s.size() == n);
+  if (single_zero) {
+    int sum = (n * (n + 1)) / 2 - accumulate(all(a), 0ll);
+    fo(i, n) {
+      if (a[i] == 0) {
+        a[i] = sum;
+        break;
+      }
+    }
+  }
+  debug(s);
+  while (lp < n && a[lp] == lp + 1) {
+    lp++;
+  }
+  int rp = n - 1;
+  while (rp >= 0 && a[rp] == rp + 1) {
+    rp--;
+  }
+  rp = n - 1 - rp;
+  cout << max(0ll, n - lp - rp) << endl;
 }
 
 signed main() {

@@ -62,6 +62,29 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  if (n == 1) {
+    cout << a[0] << endl;
+    return;
+  }
+  vi e1, o1, e2, o2;
+  fo(i, n) if (i % 2 == 0) e1.pb(2 * a[i] + i), e2.pb(2 * a[i] - i);
+  else o1.pb(2 * a[i] + i), o2.pb(2 * a[i] - i);
+  sortall(e1);
+  sortall(e2);
+  sortall(o2);
+  sortall(o1);
+  int mx = n - 1 - (n % 2 == 0);
+  mx = max(mx, o1.back() - e1[0]);
+  mx = max(mx, o2.back() - e2[0]);
+  int ans = 0;
+  fo(i, n) if (i % 2 == 0) ans += a[i];
+  else ans -= a[i];
+  cout << ans + mx << endl;
+  debug(ans);
 }
 
 signed main() {

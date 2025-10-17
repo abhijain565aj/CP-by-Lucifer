@@ -62,11 +62,41 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  string s;
+  cin >> n >> s;
+  if (n == 2) {
+    cout << "NO" << endl;
+    return;
+  }
+  vi indices;
+  fo(i, n - 2) if (s[i] == '1' && s[i + 1] == '0' && s[i + 2] == '1') indices.pb(i + 1);
+  debug(indices);
+  // continuos indeices at distance of 2
+  if ((int)indices.size()) {
+    vvi groups;
+    groups.pb({indices[0]});
+    fo1(i, 1, indices.size()) {
+      if (indices[i] - groups.back().back() == 2) {
+        groups.back().pb(indices[i + 1]);
+      } else {
+        groups.pb({indices[i + 1]});
+      }
+    }
+    debug(groups);
+    for (auto g : groups)
+      if (g.size() % 2 == 1)
+        if (((g[0] - 2 >= 0 || s[g[0] - 2] == '1') && (g.back() + 2 < n || s[g.back() + 2] == '1'))) {
+          cout << "NO" << endl;
+          return;
+        }
+  }
+  cout << "YES" << endl;
 }
 
 signed main() {
   fastio;
-  //   Error_file("0_Error.txt");
+  // Error_file("0_Error.txt");
   int testCases = 1000;
   cin >> testCases;
   fo(tt, testCases) {

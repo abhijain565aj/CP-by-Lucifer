@@ -23,7 +23,7 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #define Error_file(x)
 #endif
 
-#define int long long
+// #define int long long
 typedef long long ll;
 typedef long double ld;
 
@@ -59,10 +59,30 @@ typedef long double ld;
 
 constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
-constexpr int INF = 1e18;
+constexpr int INF = 1e9;
 
 void solve() {
-}
+  int n, m, l;
+  cin >> l >> n >> m;
+  vi a(l);
+  read(a, l);
+  vvi b(n, vi(m));
+  fo(i, n) fo(j, m) cin >> b[i][j];
+  v(v(vi)) dp1(n, v(vi)(m, vi(l, -1)));
+  auto dp2 = dp1;
+  auto fn = [&](auto&& fn, int r, int c, int idx, int dpn) -> bool {
+    if (r >= n || c >= m || idx >= l) return 0;
+    if (dpn == 1 && dp1[r][c][idx] != -1) return dp1[r][c][idx];
+    if (dpn == 2 && dp2[r][c][idx] != -1) return dp2[r][c][idx];
+    if (dpn == 1) {
+      if (b[r][c] != a[idx]) return dp1[r][c][idx] = 0;
+      return dp1[r][c][idx] = !fn(fn, r + 1, c + 1, idx + 1, 2);
+    } else {
+      return dp2[r][c][idx] = fn(fn, r, c, idx, 1) || fn(fn, r, c + 1, idx, 2) || fn(fn, r + 1, c, idx, 2);
+    }
+  };
+  cout << (fn(fn, 0, 0, 0, 2) ? "T\n" : "N\n");
+};
 
 signed main() {
   fastio;

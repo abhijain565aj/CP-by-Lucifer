@@ -62,6 +62,15 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  v(pii) a(n);
+  fo(i, n) cin >> a[i].F >> a[i].S;
+  sort(all(a), [](pii& a, pii& b) {
+    if (a.F == b.F) return a.S > b.S;
+    return a.F < b.F;
+  });
+  map<pii, pii> parent;
 }
 
 signed main() {

@@ -62,6 +62,12 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int x, y, z;
+  cin >> x >> y >> z;
+  int a = x & y;
+  int b = y & z;
+  int c = z & x;
+  YN(a == b && b == c);
 }
 
 signed main() {

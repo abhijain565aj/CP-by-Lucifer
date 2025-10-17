@@ -57,11 +57,70 @@ typedef long double ld;
 #define print_space(a, n) \
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
-constexpr int MOD = 1000000007;
+constexpr int MOD = 676767677;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  vi b(n, -2);
+  read(a, n);
+  fo(i, n - 1) {
+    if (a[i] == a[i + 1]) {
+      if (b[i] == -2)
+        b[i] = 0;
+      else
+        b[i + 1] = -b[i];
+    } else if (a[i] == a[i + 1] + 1) {
+      if (b[i] != -2 && b[i] != -1) {
+        cout << 0 << endl;
+        return;
+      } else {
+        b[i] = -1;
+        b[i + 1] = -1;
+      }
+    } else if (a[i] + 1 == a[i + 1]) {
+      if (b[i] != 1 && b[i] != -2) {
+        cout << 0 << endl;
+        return;
+      } else {
+        b[i] = 1;
+        b[i + 1] = 1;
+      }
+    } else {
+      cout << 0 << endl;
+      return;
+    }
+  }
+  auto check = [&](vi& arr) -> bool {
+    debug(arr);
+    vi pref(n, 0);
+    pref[0] = arr[0] == 1;
+    fo1(i, 1, n) pref[i] = pref[i - 1] + (arr[i] == 1);
+    vi suff(n, 0);
+    suff[n - 1] = arr[n - 1] == -1;
+    re1(i, n - 2, 0) suff[i] = suff[i + 1] + (arr[i] == -1);
+    fo(i, n) if (pref[i] + suff[i] != a[i]) return false;
+    return true;
+  };
+  debug(b);
+  int ans = 1;
+  if (b[n - 1] == -2) {
+    vi poss1 = b;
+    poss1[n - 1] = 1;
+    re(i, n - 1) if (poss1[i] == 0) poss1[i] = -poss1[i + 1];
+    vi poss2 = b;
+    poss2[n - 1] = -1;
+    re(i, n - 1) if (poss2[i] == 0) poss2[i] = -poss2[i + 1];
+    ans = check(poss1) + check(poss2);
+  } else {
+    re(i, n - 1) if (b[i] == 0) b[i] = -b[i + 1];
+    ans = check(b);
+  }
+  cout << ans << endl;
+  debug(b);
 }
 
 signed main() {

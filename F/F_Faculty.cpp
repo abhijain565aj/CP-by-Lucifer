@@ -62,11 +62,32 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  auto fn = [&](int x, int y) -> int {
+    return x % y + y % x;
+  };
+  int ans = 0;
+  int mx = 0;
+  fo(i, n) {
+    if (a[i] < 2 * mx) {
+      ans = max(ans, fn(a[i], mx));
+    } else {
+      fo(j, i) {
+        ans = max(ans, fn(a[i], a[j]));
+      }
+    }
+    mx = max(mx, a[i]);
+    cout << ans << " ";
+  }
+  cout << endl;
 }
 
 signed main() {
   fastio;
-  //   Error_file("0_Error.txt");
+  Error_file("0_Error.txt");
   int testCases = 1000;
   cin >> testCases;
   fo(tt, testCases) {

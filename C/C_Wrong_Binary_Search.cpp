@@ -62,6 +62,26 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  string s;
+  cin >> n >> s;
+  vi a(n);
+  fo(i, n) a[i] = i + 1;
+  for (int i = 0; i < n; i++) {
+    if (s[i] == '0') {
+      debug(i);
+      int j = i;
+      while (j < n && s[j] == '0') j++;
+      if (j == i + 1) {
+        cout << "NO" << endl;
+        return;
+      }
+      reverse(a.begin() + i, a.begin() + j);
+      i = j - 1;
+    }
+  }
+  cout << "YES" << endl;
+  print_space(a, n);
 }
 
 signed main() {

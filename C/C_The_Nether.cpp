@@ -1,3 +1,4 @@
+// B87678
 // Solution by Abhi Jain aka Lucifer aka abhijain565aj
 #pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
@@ -62,12 +63,62 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  auto ask = [&](int k, set<int> &s) {
+    cout << "? " << k << " " << s.size() << " ";
+    for (auto x : s) cout << x << " ";
+    cout << endl;
+    int ans;
+    cin >> ans;
+    return ans;
+  };
+  int n;
+  cin >> n;
+  set<int> s;
+  fo(i, n) s.insert(i + 1);
+  set<pii> res;
+  fo(i, n) {
+    res.insert({ask(i + 1, s), i + 1});
+  }
+  vi path;
+  while (!res.empty()) {
+    auto [val, idx] = *res.rbegin();
+    res.erase(*res.rbegin());
+    while (res.size() && res.rbegin()->F == val) {
+      s.erase(res.rbegin()->S);
+      res.erase(*res.rbegin());
+    }
+    path.pb(idx);
+    v(pii) temp;
+    while (res.size() && res.rbegin()->F == val - 1) {
+      temp.pb(*res.rbegin());
+      s.erase(res.rbegin()->S);
+      res.erase(*res.rbegin());
+    }
+    if (temp.size() == 1) {
+      res.insert(temp[0]);
+      s.insert(temp[0].S);
+      s.erase(idx);
+      continue;
+    }
+    for (auto [v, i] : temp) {
+      s.insert(i);
+      if (ask(idx, s) == val) {
+        res.insert({v, i});
+        break;
+      }
+      s.erase(i);
+    }
+    s.erase(idx);
+  }
+  cout << "! " << path.size() << " ";
+  for (auto x : path) cout << x << " ";
+  cout << endl;
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  int testCases = 1;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);

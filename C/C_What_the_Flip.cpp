@@ -1,3 +1,4 @@
+// B87678
 // Solution by Abhi Jain aka Lucifer aka abhijain565aj
 #pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
@@ -62,12 +63,26 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  n++;
+  vi dp0(n), dp1(n), dp2(n), dp3(n), dp4(n), dp5(n);
+  dp1[1] = dp2[1] = 1;
+  fo1(i, 2, n) {
+    dp1[i] = (dp3[i - 1] + dp2[i - 1])%MOD;
+    dp2[i] = (dp1[i - 1] + dp4[i - 1] + dp5[i - 1])%MOD;
+    dp3[i] = dp2[i - 1]%MOD;
+    dp4[i] = dp4[i - 1]%MOD;
+    dp5[i] = dp5[i - 1]%MOD;
+  }
+  n--;
+  cout << (dp1[n] + dp2[n] + dp3[n] + dp4[n] + dp5[n])%MOD << endl;
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  int testCases = 1;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);

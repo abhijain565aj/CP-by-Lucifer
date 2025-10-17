@@ -62,6 +62,13 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  sortall(a);
+  a.resize(unique(all(a)) - a.begin());
+  cout << 2 * a.size() - 1 << endl;
 }
 
 signed main() {

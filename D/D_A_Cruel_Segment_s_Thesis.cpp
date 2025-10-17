@@ -62,6 +62,39 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  v(pii) a(n);
+  int ans = 0;
+  set<int> s;
+  fo(i, n) {
+    cin >> a[i].F >> a[i].S;
+    ans += a[i].S - a[i].F;
+  }
+  if (n == 1) {
+    cout << ans << endl;
+    return;
+  }
+  sort(all(a), [](pii &x, pii &y) {
+    return x.S + x.F < y.S + y.F;
+  });
+  debug(ans);
+  int n1 = n / 2;
+  if (n % 2) {
+    sort(a.begin(), a.begin() + n1);
+    sort(a.rbegin(), a.rbegin() + n1, [](pii &x, pii &y) {
+      return x.S > y.S;
+    });
+    debug(a);
+    auto mid = a[n1];
+    int diff1 = -mid.F + a[n1 - 1].F;
+    int diff2 = mid.S - a[n1 + 1].S;
+    ans += max(max(diff1, diff2), 0ll);
+    debug(ans);
+  }
+  fo(i, n1) ans -= a[i].F;
+  fo(i, n1) ans += a[n - i - 1].S;
+  cout << ans << endl;
 }
 
 signed main() {

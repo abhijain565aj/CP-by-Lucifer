@@ -1,3 +1,4 @@
+// B87678
 // Solution by Abhi Jain aka Lucifer aka abhijain565aj
 #pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
@@ -62,12 +63,64 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vvi adj(n);
+  for (int i = 0; i < n - 1; i++) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u].pb(v);
+    adj[v].pb(u);
+  }
+  int mx = 0;
+  fo(i, n) mx = max(mx, (int)adj[i].size());
+  if (mx <= 2) {
+    cout << -1 << endl;
+    return;
+  }
+
+  vi distance(n, -1);
+  vi parent(n, -1);
+  auto dfs = [&](auto&& dfs, int node) -> void {
+    for (int neigh : adj[node]) {
+      if (neigh == parent[node]) continue;
+      distance[neigh] = distance[node] + 1;
+      parent[neigh] = node;
+      dfs(dfs, neigh);
+    }
+  };
+  fo(i, n) if (adj[i].size() > 1) {
+    distance[i] = 0;
+    dfs(dfs, i);
+    break;
+  }
+  int mxd = max_element(all(distance)) - distance.begin();
+  parent.assign(n, -1);
+  distance.assign(n, -1);
+  dfs(dfs, mxd);
+
+  vi diameter;
+  int curr = max_element(all(distance)) - distance.begin();
+  while (curr != -1) {
+    diameter.pb(curr);
+    curr = parent[curr];
+  }
+  debug(diameter);
+  for (int i = 1; i < n - 1; i++) {
+    for (int c : adj[diameter[i]]) {
+      if (c != diameter[i - 1] && c != diameter[i + 1]) {
+        cout << diameter[i - 1] + 1 << " " << diameter[i] + 1 << " " << c + 1 << endl;
+        return;
+      }
+    }
+  }
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  int testCases = 1;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);

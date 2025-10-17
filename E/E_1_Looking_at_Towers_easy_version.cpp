@@ -62,6 +62,21 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  v(pii) L, R;
+  L.pb({a[0], 0});
+  R.pb({a[n - 1], n - 1});
+  fo1(i, 1, n) {
+    if (a[i] > L.back().F) L.pb({a[i], i});
+  }
+  re1(i, n - 2, 0) {
+    if (a[i] > R.back().F) R.pb({a[i], i});
+  }
+  reverse(all(R));
+  debug(L, R);
 }
 
 signed main() {

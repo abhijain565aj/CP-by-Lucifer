@@ -62,6 +62,32 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  vi b(n);
+  read(b, n);
+  vector<pii> s;
+  s.push_back({2 * n + 1, -1});
+  vi lmax(n);
+  fo(i, n) {
+    while (s.back().F < a[i]) s.pop_back();
+    lmax[i] = s.back().S;
+    if (b[i] > a[i]) {
+      lmax[i] = lower_bound(s.rbegin(), s.rend(), make_pair(b[i], -1ll))->S;
+    }
+    s.push_back({a[i], i});
+  }
+  int ans = 0;
+  fo(i, n) ans += (n - i) * (i + 1);
+  debug(lmax, ans);
+  fo(i, n) {
+    if (a[i] == b[i]) continue;
+    ans -= (i - lmax[i]) * (n - i);
+    debug(i, lmax[i], ans);
+  }
+  cout << ans << endl;
 }
 
 signed main() {

@@ -58,10 +58,19 @@ typedef long double ld;
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
 constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int N = 2e6 + 1;
 constexpr int INF = 1e18;
+v(vi) dp(N, {-1, -1});
 
-void solve() {
+int solve(int n, bool taken) {
+  debug(n);
+  if (n <= 0) return 0;
+  if (dp[n][taken] != -1) return dp[n][taken];
+  if (taken && n <= 2) return dp[n][taken] = 0;
+  if (!taken)
+    return dp[n][taken] = (max(solve(n - 2, 0), solve(n - 2, 1)) * 2 + max(solve(n - 1, 0), solve(n - 1, 1))) % MOD;
+  else
+    return dp[n][taken] = (4 + solve(n - 1, 0) + solve(n - 2, 0) * 2) % MOD;
 }
 
 signed main() {
@@ -71,6 +80,10 @@ signed main() {
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);
-    solve();
+    int n;
+    cin >> n;
+    int ans = max(solve(n, 0), solve(n, 1));
+    cout << ans << endl;
+    debug(ans);
   }
 }

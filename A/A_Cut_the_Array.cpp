@@ -62,6 +62,29 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  int total = accumulate(all(a), 0ll) % 3;
+  int left = 0;
+  fo(i, n) {
+    left += a[i];
+    left %= 3;
+    int centre = 0;
+    for (int j = i + 1; j < n; j++) {
+      centre += a[j];
+      centre %= 3;
+      int right = (total - left - centre + 9) % 3;
+      if ((left == right && left == centre) || (left != right && left != centre && right != centre)) {
+        {
+          cout << i + 1 << " " << j + 1 << endl;
+          return;
+        }
+      }
+    }
+  }
+  cout << 0 << " " << 0 << endl;
 }
 
 signed main() {

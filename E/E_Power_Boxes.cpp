@@ -1,3 +1,4 @@
+// B87678
 // Solution by Abhi Jain aka Lucifer aka abhijain565aj
 #pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
@@ -60,14 +61,84 @@ typedef long double ld;
 constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
-
+int n;
+vi a(n);
+int throw_output(int x) {
+  x--;
+  int cnt = 1;
+  while (x < n && x + a[x] < n) {
+    x = x + a[x];
+    cnt++;
+  }
+  debug(cnt);
+  return cnt;
+}
+void swap_output(int x) {
+  swap(a[x], a[x - 1]);
+}
 void solve() {
+  cin >> n;
+  // a.resize(n);
+  // read(a, n);
+  vi jumps(n + 1, -1);
+  vi initial(n, -1);
+  fo(i, n) initial[i] = i;
+  vi power(n, -1);
+  jumps[n] = 0;
+  power[n - 1] = jumps[n - 1] = 1;
+  auto thr = [&](int x) -> int {
+    cout << "throw " << x + 1 << endl;
+    int js;
+    cin >> js;
+    // js = throw_output(x + 1);
+    return js;
+  };
+
+  auto swp = [&](int x) {
+    cout << "swap " << x + 1 << endl;
+    swap(power[x], power[x + 1]);
+    swap(initial[x], initial[x + 1]);
+    // swap_output(x + 1);
+  };
+
+  for (int i = n - 2; i >= 0;) {
+    debug(power, jumps);
+    jumps[i] = thr(i);
+    if (power[i + 1] == 1) {
+      power[i] = (jumps[i] == jumps[i + 1]) ? 2 : 1;
+    } else if (power[i + 2] == 2) {
+      power[i] = (jumps[i] == jumps[i + 2] + 1) ? 2 : 1;
+    }
+    i -= max(power[i], 1ll);
+  }
+  for (int i = n - 3; i >= 0; i--) {
+    jumps[i] = 1 + jumps[power[i] + i];
+    if (power[i] == -1) {
+      debug(power, jumps);
+      if (jumps[i + 1] == jumps[i + 2]) {
+        swp(i);
+        jumps[i + 1] = thr(i + 1);
+        power[i + 1] = (jumps[i + 1] == 1 + jumps[i + 2]) ? 1 : 2;
+        jumps[i] = 1 + jumps[i + power[i]];
+      } else {
+        jumps[i] = thr(i);
+        power[i] = (jumps[i] == 1 + jumps[i + 1]) ? 1 : 2;
+      }
+    }
+  }
+  swp(n - 2);
+  power[n - 2] = 3 - thr(n - 2);
+  map<int, int> mp;
+  fo(i, n) mp[initial[i]] = power[i];
+  cout << "! ";
+  fo(i, n) cout << mp[i] << " ";
+  cout << endl;
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  int testCases = 1;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);

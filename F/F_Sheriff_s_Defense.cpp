@@ -62,6 +62,49 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, c;
+  cin >> n >> c;
+  vi a(n);
+  read(a, n);
+  vvi adj(n);
+  fo(i, n - 1) {
+    int u, v;
+    cin >> u >> v;
+    u--;
+    v--;
+    adj[u].pb(v);
+    adj[v].pb(u);
+  }
+  vvi dp(n, vi(3, -1));  // 0-> not strengthened, 1->strengthened and parent not, 2->parent also strengthened
+  vi parent(n, -1);
+  auto dfs = [&](auto&& dfs, int u, int type) -> int {
+    if (dp[u][type] != -1) return dp[u][type];
+    int ret = 0;
+    if (type == 0) {
+      for (auto& v : adj[u]) {
+        if (v == parent[u]) continue;
+        parent[v] = u;
+        ret += max(dfs(dfs, v, 0), dfs(dfs, v, 1));
+      }
+    } else if (type == 1) {
+      ret = a[u];
+      for (auto& v : adj[u]) {
+        if (v == parent[u]) continue;
+        parent[v] = u;
+        ret += max({dfs(dfs, v, 0), dfs(dfs, v, 2)});
+      }
+    } else {
+      ret = a[u] - 2 * c;
+      for (auto& v : adj[u]) {
+        if (v == parent[u]) continue;
+        parent[v] = u;
+        ret += max({dfs(dfs, v, 0), dfs(dfs, v, 2)});
+      }
+    }
+    debug(u, type, ret);
+    return dp[u][type] = ret;
+  };
+  cout << max(dfs(dfs, 0, 0), dfs(dfs, 0, 1)) << '\n';
 }
 
 signed main() {

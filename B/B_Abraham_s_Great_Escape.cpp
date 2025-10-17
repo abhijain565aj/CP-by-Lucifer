@@ -62,6 +62,29 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, k;
+  cin >> n >> k;
+  if (k + 1 == n * n) {
+    cout << "NO\n";
+    return;
+  }
+  auto old_k = k;
+  vector<string> ans(n, "");
+  fo(i, n) {
+    fo(j, n) {
+      if (k > 0) {
+        ans[i] += 'U';
+        k--;
+      } else if (i != n - 1) {
+        ans[i] += 'D';
+      } else if (i == n - 1) {
+        ans[i] += 'R';
+      }
+    }
+  }
+  if (old_k != n * n) ans[n - 1][n - 1] = 'L';
+  cout << "YES\n";
+  for (auto& x : ans) cout << x << "\n";
 }
 
 signed main() {

@@ -62,6 +62,49 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int l, n;
+  cin >> l >> n;
+  n++;
+  vi a(n);
+  fo(i, n) a[i] = i;
+  auto b = a;
+  auto msb = [](int x) {
+    while (x & (x - 1)) x &= (x - 1);
+    return x;
+  };
+  auto solve = [&](auto&& solve, int l, int r) {
+    int diff = r - l + 1;
+    if (diff <= 1) return;
+    int mx = msb(diff);
+    solve(solve, l + mx, r);
+    reverse(a.begin() + l, a.begin() + l + mx);
+    debug(mx);
+    debug(l, r);
+    debug(a);
+    map<int, int> mp;
+    fo(i, n) mp[a[i]] = i;
+    debug(mp);
+    for (int i = l; i < l + mx; i++) {
+      if (mp.find(a[i] + mx) == mp.end()) continue;
+      debug(a[i], a[i] + mx);
+      swap(a[i], a[mp[a[i] + mx]]);
+    }
+    debug(a);
+  };
+  solve(solve, 0, n - 1);
+  // int delta = n;
+  // for (int i = 0; delta != 0;) {
+  //   int dx = msb(delta);
+  //   reverse(a.begin() + i, a.begin() + i + dx);
+  //   i += dx;
+  //   delta -= dx;
+  // }
+  int ans = 0;
+  fo(i, n) {
+    ans += a[i] | b[i];
+  }
+  cout << ans << endl;
+  print_space(a, n);
 }
 
 signed main() {

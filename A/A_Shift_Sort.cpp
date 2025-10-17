@@ -62,6 +62,14 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  string s;
+  cin >> n >> s;
+  int z = 0;
+  fo(i, n) if (s[i] == '0') z++;
+  auto z1 = z;
+  fo(i, z) if (s[i] == '0') z1--;
+  cout << z1 << endl;
 }
 
 signed main() {

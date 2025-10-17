@@ -61,12 +61,61 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
+vvi factors(N);
 void solve() {
+  int n, q;
+  cin >> n >> q;
+  vi a(n);
+  read(a, n);
+  map<int, vi> freq;
+  fo(i, n) {
+    freq[a[i]].pb(i);
+  }
+  while (q--) {
+    debug(q);
+    int k, l, r;
+    cin >> k >> l >> r;
+    l--, r--;
+    int ind = l - 1;
+    int ans = 0;
+    while (k > 1 && ind < r) {
+      debug(k, ind, ans);
+      auto& fac = factors[k];
+      int mini = -1;
+      int minf = -1;
+      for (int f : fac) {
+        auto it = upper_bound(all(freq[f]), ind);
+        if (it != freq[f].end() && (*it) <= r) {
+          if (mini == -1 || *it < mini) {
+            mini = *it;
+            minf = f;
+          }
+        }
+      }
+      if (mini == -1) break;
+      ind = max(ind, l);
+      ans += k * (mini - ind);
+      while (k % minf == 0) {
+        k = k / minf;
+      }
+      ind = mini;
+    }
+    ind = max(ind, l);
+    debug(k, ind, ans, r);
+    ans += k * (r - ind + 1);
+    cout << ans << "\n";
+  }
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
+
+  for (int i = 1; i < N; i++) {
+    for (int j = i; j < N; j += i) {
+      factors[j].pb(i);
+    }
+  }
   int testCases = 1000;
   cin >> testCases;
   fo(tt, testCases) {

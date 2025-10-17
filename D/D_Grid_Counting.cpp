@@ -57,15 +57,73 @@ typedef long double ld;
 #define print_space(a, n) \
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
-constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int MOD = 998244353;
+constexpr int N = 2e5 + 1;
 constexpr int INF = 1e18;
+vi fact(N);
+// Modular Arithmetic
+ll mod(ll a, ll m = MOD) {
+  return (a % m + m) % m;
+}
+ll add(ll a, ll b, ll m = MOD) {
+  return mod(a + b, m);
+}
+ll sub(ll a, ll b, ll m = MOD) {
+  return mod(a - b, m);
+}
+ll mul(ll a, ll b, ll m = MOD) {
+  return mod(a * b, m);
+}
+ll power(ll a, ll b, ll m = MOD) {
+  ll res = 1;
+  while (b) {
+    if (b & 1)
+      res = mul(res, a, m);
+    a = mul(a, a, m);
+    b >>= 1;
+  }
+  return res;
+}
+ll inv(ll a, ll m = MOD) {
+  return power(a, m - 2, m);
+}
+ll divide(ll a, ll b, ll m = MOD) {
+  return mul(a, inv(b, m), m);
+}
 
+ll nCr(int n, int r) {
+  if (r > n)
+    return 0;
+  else if (r == 0 || r == n)
+    return 1;
+  return divide(fact[n], mul(fact[r], fact[n - r]));
+}
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  if (accumulate(all(a), 0ll) != n) {
+    cout << 0 << endl;
+    return;
+  }
+  vi suf(n + 1);
+  suf[n] = 0;
+  re1(i, n - 1, 0) suf[i] = suf[i + 1] + a[i];
+  debug(suf);
+  vi b(n);
+  fo(i, n) b[i] = max(n - 2 * i, 0ll);
+  int ans = 1;
+  fo(i, n) {
+    ans = mul(ans, nCr(b[i] - suf[i + 1], a[i]));
+  }
+  cout << ans << endl;
 }
 
 signed main() {
   fastio;
+  fact[0] = 1;
+  for (int i = 1; i < N; i++) fact[i] = (fact[i - 1] * i) % MOD;
   //   Error_file("0_Error.txt");
   int testCases = 1000;
   cin >> testCases;

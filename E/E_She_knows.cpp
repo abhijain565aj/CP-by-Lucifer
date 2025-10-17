@@ -61,7 +61,78 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
+// Modular Arithmetic
+ll mod(ll a, ll m = MOD) {
+  return (a % m + m) % m;
+}
+ll add(ll a, ll b, ll m = MOD) {
+  return mod(a + b, m);
+}
+ll sub(ll a, ll b, ll m = MOD) {
+  return mod(a - b, m);
+}
+ll mul(ll a, ll b, ll m = MOD) {
+  return mod(a * b, m);
+}
+ll power(ll a, ll b, ll m = MOD) {
+  ll res = 1;
+  while (b) {
+    if (b & 1)
+      res = mul(res, a, m);
+    a = mul(a, a, m);
+    b >>= 1;
+  }
+  return res;
+}
+ll inv(ll a, ll m = MOD) {
+  return power(a, m - 2, m);
+}
+ll divide(ll a, ll b, ll m = MOD) {
+  return mul(a, inv(b, m), m);
+}
+
 void solve() {
+  int n, m, k;
+  cin >> n >> m >> k;
+  v(pii) a(k);
+  map<pii, int> mp;
+  fo(i, k) cin >> a[i].F >> a[i].S, cin >> mp[a[i]];
+  auto check = [&](pii x) -> int {
+    // -1 if not possible
+    // 0 if white or not in map
+    if (x.F < 1 || x.F > n || x.S < 1 || x.S > m) return -1;
+    if (mp.find(x) == mp.end()) return 0;
+    return mp[x];
+  };
+  v(pii) dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+  int ans = power(2, n * m - k);
+  fo1(i, 1, n - 1) {
+    if (mp.find({i + 1, 1}) == mp.end() || mp.find({i + 1, m}) == mp.end()) {
+      cout << divide(ans, 2) << endl;
+      return;
+    }
+  }
+  fo1(i, 1, m - 1) {
+    if (mp.find({1, i + 1}) == mp.end() || mp.find({n, i + 1}) == mp.end()) {
+      cout << divide(ans, 2) << endl;
+      return;
+    }
+  }
+  int total_count = 0;
+  for (auto& p : a) {
+    for (auto d : dir) {
+      pii cand = {p.F + d.F, p.S + d.S};
+      int val = check(cand);
+      if (val == -1) continue;
+      if (val != mp[p] && val == 0) total_count++;
+    }
+  }
+  total_count %= 2;
+  if (total_count) {
+    cout << 0 << endl;
+  } else {
+    cout << ans << endl;
+  }
 }
 
 signed main() {

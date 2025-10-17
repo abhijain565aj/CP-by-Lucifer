@@ -62,12 +62,41 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  map<int, pair<int, vi>> mp;
+  mp[a[0]] = {1, {0}};
+  vi dp(n);
+  dp[0] = 0;
+  if (a[0] == 1) {
+    mp[1] = {0, {1}};
+    dp[0] = 1;
+  }
+  fo1(i, 1, n) {
+    if (mp[a[i]].F <= 0) {
+      mp[a[i]] = {1, {}};
+    } else {
+      mp[a[i]].F++;
+    }
+    dp[i] = dp[i - 1];
+    mp[a[i]].S.pb(dp[i]);
+    if (mp[a[i]].F >= a[i]) {
+      auto& v = mp[a[i]].S;
+      if (dp[i] <= a[i] + v[v.size() - a[i]]) {
+        dp[i] = a[i] + v[v.size() - a[i]];
+      }
+    }
+    debug(mp);
+  }
+  cout << dp.back() << endl;
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
+  int testCases = 1;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);

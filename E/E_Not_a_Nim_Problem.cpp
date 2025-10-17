@@ -58,15 +58,43 @@ typedef long double ld;
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
 constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int N = 1e7 + 1;
 constexpr int INF = 1e18;
-
+vi mex(N, 0);
+vi pf(N, 0);
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  int nim_sum = 0;
+  fo(i, n) nim_sum ^= mex[a[i]];
+  cout << (nim_sum ? "Alice" : "Bob") << endl;
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
+  for (int i = 2; i < N; i++) {
+    if (pf[i] == 0) {
+      for (int j = 2 * i; j < N; j += i)
+        if (pf[j] == 0) {
+          pf[j] = i;
+        }
+    }
+  }
+  debug(pf);
+  int prime_count = 0;
+  for (int i = 0; i < N; i++) {
+    if (i % 2 == 0) {
+      mex[i] = 0;
+    } else if (pf[i] == 0) {
+      mex[i] = ++prime_count;
+    } else {
+      mex[i] = mex[pf[i]];
+    }
+  }
+  debug(mex);
   int testCases = 1000;
   cin >> testCases;
   fo(tt, testCases) {

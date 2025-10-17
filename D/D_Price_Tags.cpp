@@ -62,8 +62,33 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n, y;
+  cin >> n >> y;
+  vi a(n);
+  int mx = 0;
+  fo(i, n) {
+    cin >> a[i];
+    mx = max(mx, a[i]);
+  }
+  vi f(mx + 1), pre(mx + 1);
+  fo(i, n) f[a[i]]++;
+  fo1(i, 1, mx + 1) pre[i] = pre[i - 1] + f[i];
+  int ans = LLONG_MIN;
+  fo1(step, 2, mx + 2) {
+    int sum = 0, r = 0;
+    for (int st = 1; st <= mx; st += step) {
+      int ed = min(st + step - 1, mx);
+      int cnt = pre[ed] - pre[st - 1];
+      if (!cnt) continue;
+      int val = (st + step - 1) / step;
+      sum += cnt * val;
+      if (val <= mx) r += min((int)f[val], cnt);
+    }
+    int pr = n - r;
+    ans = max(ans, sum - pr * y);
+  }
+  cout << ans << "\n";
 }
-
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");

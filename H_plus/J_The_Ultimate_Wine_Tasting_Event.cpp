@@ -62,6 +62,50 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  string s;
+  cin >> s;
+  vi wf, rf, ws, rs;
+  fo(i, n) {
+    if (s[i] == 'W')
+      wf.pb(i);
+    else
+      rf.pb(i);
+  }
+  fo1(i, n, 2 * n) {
+    if (s[i] == 'W')
+      ws.pb(i);
+    else
+      rs.pb(i);
+  }
+  debug(wf, rf, ws, rs);
+  if (wf.size() % 2) {
+    cout << "NO\n";
+    return;
+  }
+
+  int s1, s2;
+  if (wf.size())
+    s1 = wf[wf.size() / 2 - 1], s2 = wf.back();
+  else
+    s1 = s2 = -1;
+
+  if (!rf.empty()) {
+    if (rf[0] < s1 || ws[0] < s2) {
+      cout << "NO\n";
+      return;
+    }
+    s1 = rf.back();
+    s2 = ws.back();
+  }
+  if (!rs.empty()) {
+    if (rs[0] < s1 || rs[rs.size() / 2] < s2) {
+      cout << "NO\n";
+      return;
+    }
+  }
+  cout << "YES\n";
 }
 
 signed main() {

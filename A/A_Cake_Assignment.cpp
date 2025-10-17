@@ -62,6 +62,26 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  ll k, x;
+  cin >> k >> x;
+  ll left = (1ll << (k + 1)) - x, right = x;
+  vi ans;
+  while (left != right) {
+    debug(left, right);
+    if (left > right) {
+      ans.pb(1);
+      left -= right;
+      right += right;
+    } else {
+      ans.pb(2);
+      right -= left;
+      left += left;
+    }
+  }
+  reverse(all(ans));
+  cout << ans.size() << endl;
+  for (auto i : ans) cout << i << " ";
+  cout << endl;
 }
 
 signed main() {

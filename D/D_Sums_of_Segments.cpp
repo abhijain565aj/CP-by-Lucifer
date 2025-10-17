@@ -62,13 +62,56 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+
+  vi pre(n, 0);
+  fo(i, n) pre[i] = (i > 0 ? pre[i - 1] + a[i] : a[i]);
+
+  vi prepre(n, 0);
+  fo(i, n) prepre[i] = (i > 0 ? prepre[i - 1] + pre[i] : pre[i]);
+
+  int total = prepre.back();
+  v(pii) bsums(n);
+  fo(i, n) {
+    bsums[i] = {(n - i), total};
+    total -= (n - i) * a[i];
+  }
+
+  v(pii) bpref(n);
+  bpref[0] = bsums[0];
+  fo1(i, 1, n) bpref[i] = {bpref[i - 1].F + bsums[i].F, bpref[i - 1].S + bsums[i].S};
+
+  debug(pre, prepre, bsums, bpref);
+  auto fn = [&](int ind) -> int {
+    if (ind <= 0) return 0;
+    int j = lower_bound(all(bpref), make_pair(ind, -INF)) - bpref.begin();
+    debug(ind, j);
+    int ans = 0;
+    if (j > 0) ans += bpref[j - 1].S, ind -= bpref[j - 1].F;
+    debug(ans, ind);
+    if (ind == 0) return ans;
+    if (j == 0) return ans + prepre[ind - 1];
+    ans += prepre[j + ind - 1] - prepre[j - 1] - ind * pre[j - 1];
+    return ans;
+  };
+
+  int q;
+  cin >> q;
+  while (q--) {
+    int l, r;
+    cin >> l >> r;
+    cout << fn(r) - fn(l - 1) << endl;
+  }
 }
 
 signed main() {
   fastio;
   //   Error_file("0_Error.txt");
-  int testCases = 1000;
-  cin >> testCases;
+  int testCases = 1;
+  // cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);
     solve();
