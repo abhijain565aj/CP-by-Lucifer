@@ -1,20 +1,30 @@
-#include <iostream>
-#include <stdexcept>
-#include <any>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
-int main()
-{
-    try
-    {
-        float e1 = 10;
-        std::any e = e1;
-        throw e;
-    }
-    catch (std::any e)
-    {
-        std::cout << "Hello " << e << std::endl;
-    }
+struct Animal {
+  int x;
+  Animal() {
+    x = 10;
+  }
+  void virtual sound() {
+    cout << "Hello" << endl;
+  }
+};
 
-    return 0;
+struct Dog : Animal {
+  int x;
+  Dog() {
+    x = 20;
+  }
+  void sound() {
+    cout << "Woof" << endl;
+  }
+};
+
+int main() {
+  Dog* a = new Dog();
+  Animal b = Dog();
+  a->sound();
+  cout << a->x << endl;
+  b.sound();
+  return 0;
 }

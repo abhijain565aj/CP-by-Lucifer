@@ -25,6 +25,7 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 #define int long long
 typedef long long ll;
+typedef long double ld;
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -63,29 +64,39 @@ constexpr int INF = 1e18;
 void solve() {
   int n;
   cin >> n;
-  string a, b;
-  cin >> a >> b;
-  vi A(n), B(n);
-  A[0] = (a[0] == '0') ? -1 : +1;
-  B[0] = (b[0] == '0') ? -1 : +1;
-  fo1(i, 1, n) {
-    A[i] = A[i - 1] + ((a[i] == '0') ? -1 : +1);
-    B[i] = B[i - 1] + ((b[i] == '0') ? -1 : +1);
+  string s, t;
+  cin >> s >> t;
+
+  // for each cell at (i,j) count1 = 1s in s[0..i], t[0..j]
+  // answer = min(count1, count0) = (count0+count1)/2 - abs(count1-count0)/2
+  int lhs = n * (n * (n + 1) / 2);
+  vi a1(n), a2(n);
+  fo(i, n) {
+    a1[i] = (s[i] == '1' ? 1 : -1) + (i > 0 ? a1[i - 1] : 0);
+    a2[i] = (t[i] == '1' ? 1 : -1) + (i > 0 ? a2[i - 1] : 0);
   }
-  v(pii) A1(n);
-  fo(i, n) A1[i] = {A[i], i+1};
-  sortall(A1);
-  vi pfsumA(n);
-  pfsumA[0] = A1[0].F;
-  fo1(i, 1, n) {
-    pfsumA[i] = pfsumA[i - 1] + A1[i].
+
+  debug(lhs);
+  sortall(a1);
+  vi p1(n);
+  fo(i, n) p1[i] = a1[i] + (i > 0 ? p1[i - 1] : 0);
+
+  debug(a1);
+  debug(a2);
+  int rhs = 0;
+  fo(i, n) {
+    int ind = lower_bound(all(a1), -a2[i]) - a1.begin();
+    if (ind >= 1)
+      rhs -= a2[i] * ind + p1[ind - 1];
+    rhs += (p1[n - 1] - ((ind > 0) ? p1[ind - 1] : 0)) + a2[i] * (n - ind);
   }
+  cout << lhs - rhs / 2 << "\n";
 }
 
 signed main() {
   fastio;
-  Error_file("0_Error.txt");
-  int testCases = 1;
+  //   Error_file("0_Error.txt");
+  int testCases = 1000;
   cin >> testCases;
   fo(tt, testCases) {
     Test(tt + 1);
