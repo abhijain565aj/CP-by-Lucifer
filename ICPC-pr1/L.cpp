@@ -131,12 +131,37 @@ signed main() {
   sieve();
 
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
   fo(tt, testCases) {
     solve();
   }
 }
 
-void solve(){
-  
+void solve() {
+  int n, k;
+  cin >> n >> k;
+  if (k < n / 2 || k == n) {
+    cout << -1 << endl;
+    return;
+  }
+  int half = n / 2;
+  int delta = k - half;
+  string s = "";
+  bool other = false;
+  if (half & 1 && delta & 1) other = true, half--, delta++;
+  fo(i, half / 2) {
+    s += "(";
+    if (delta > 1) {
+      s += ")";
+      delta -= 2;
+    }
+  }
+  auto c = s;
+  reverse(all(c));
+  if (half & 1) s += "(";
+  if (delta & 1) s += ")";
+  s += c;
+  if (other) s = "(" + s;
+  while (s.size() != n) s += ")";
+  cout << s << endl;
 }
