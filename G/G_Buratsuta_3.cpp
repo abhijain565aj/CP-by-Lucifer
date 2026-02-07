@@ -65,22 +65,41 @@ template <typename T>
 struct SegmentTree {
   vector<T> tree;
   ll n;
+  unordered_map<int, vi> mp;
   SegmentTree(ll n) {
     this->n = n;
     tree.resize(4 * n);
   }
-  void build(vector<T>& a) {
-    buildp(a, 1, 0, n - 1);
+  void build(vector<int>& a) {
+    v(vi) b(n, vi(2));
+    fo(i, n) b[i] = {a[i]};
+    fo(i, n) mp[a[i]].pb(i);
+    buildp(b, 1, 0, n - 1);
   }
-  T sum(ll l, ll r) {
-    return sump(1, 0, n - 1, l, r);
+  int count(int x, int l, int r) {
+    int res = upper_bound(all(mp[x]), r) - lower_bound(all(mp[x]), l);
+    return res;
   }
-  void update(ll pos, T new_val) {
-    updatep(1, 0, n - 1, pos, new_val);
+  vi sum(ll l, ll r) {
+    auto ans = sump(1, 0, n - 1, l, r);
+    int v = (r - l + 1) / 3;
+    vi res;
+    for (auto x : ans) {
+      if (count(x, l, r) > v) res.pb(x);
+    }
+    sortall(res);
+    return res;
   }
-  T operation(T l, T r) {
-    return l + r;
-    // change this
+  T operation(T l, T r, int tl, int tr) {
+    set<int> s;
+    for (auto x : l) s.insert(x);
+    for (auto x : r) s.insert(x);
+    vi res;
+    for (auto x : s) {
+      auto r = count(x, tl, tr);
+      if (r > (tr - tl + 1) / 3) res.pb(x);
+    }
+    return res;
   }
 
   void buildp(vector<T>& a, ll v, ll tl, ll tr) {
@@ -90,65 +109,51 @@ struct SegmentTree {
       ll tm = (tl + tr) / 2;
       buildp(a, v * 2, tl, tm);
       buildp(a, v * 2 + 1, tm + 1, tr);
-      tree[v] = operation(tree[v * 2], tree[v * 2 + 1]);
+      tree[v] = operation(tree[v * 2], tree[v * 2 + 1], tl, tr);
     }
   }
   T sump(ll v, ll tl, ll tr, ll l, ll r) {
     if (l > r) {
-      return 0;
+      return {-1, -1};
     }
     if (l == tl && r == tr) {
       return tree[v];
     }
     ll tm = (tl + tr) / 2;
-    return operation(sump(v * 2, tl, tm, l, min(r, tm)), sump(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-  }
-  void updatep(ll v, ll tl, ll tr, ll pos, T new_val) {
-    if (tl == tr) {
-      tree[v] = new_val;
-    } else {
-      ll tm = (tl + tr) / 2;
-      if (pos <= tm) {
-        updatep(v * 2, tl, tm, pos, new_val);
-      } else {
-        updatep(v * 2 + 1, tm + 1, tr, pos, new_val);
-      }
-      tree[v] = operation(tree[v * 2], tree[v * 2 + 1]);
-    }
+    return operation(sump(v * 2, tl, tm, l, min(r, tm)), sump(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r), l, r);
   }
 };
 
-signed main() {
-  fastio;
-  int n, m;
-  cin >> n >> m;
+void solve() {
+  int n, q;
+  cin >> n >> q;
   vi a(n);
   read(a, n);
-  map<int, int> last_r;
-  fo(i, n) last_r[a[i]] = n;
-  vi b(n);
-  re(i, n) {
-    b[i] = last_r[a[i]];
-    last_r[a[i]] = i;
-  }
-  // 1 2 -> 3
-  // 1 3 -> 3
-  // 2 3 -> 4
-  vi c(n);
-  fo(i, n) if (last_r[a[i]] == i) c[i] = 1;
-  SegmentTree<int> seg(n);
-  seg.build(c);
-  int ans = (m - last_r.size()) * last_r.size();
-  for (auto [_, r] : last_r) {
-    ans += seg.sum(0, r - 1);
-  }
-  fo(i, n) {
-    int cnt = seg.sum(i, b[i] - 1);
-    ans += (cnt - 1);
-    if (b[i] < n) {
-      seg.update(b[i], 1);
+  SegmentTree<vi> seg(n);
+  seg.build(a);
+  while (q--) {
+    int l, r;
+    cin >> l >> r;
+    l--, r--;
+    vi res = seg.sum(l, r);
+    if (res.size() == 0) {
+      cout << -1 << endl;
+      continue;
     }
-    debug(ans);
+    for (auto x : res) {
+      cout << x << " ";
+    }
+    cout << endl;
   }
-  cout << ans << endl;
+}
+
+signed main() {
+  fastio;
+  //   Error_file("0_Error.txt");
+  int testCases = 1000;
+  cin >> testCases;
+  fo(tt, testCases) {
+    Test(tt + 1);
+    solve();
+  }
 }

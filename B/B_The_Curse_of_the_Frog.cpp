@@ -62,45 +62,27 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
-      }
-    }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+  int n, x;
+  cin >> n >> x;
+  vector<array<int, 3>> a(n);
+  int mx = 0;
+  int mn = 0;
+  for (auto& [x, y, z] : a) {
+    cin >> x >> y >> z;
+    mx += x * (y - 1);
+    mn = max(x * y - z, mn);
   }
-  cout << endl;
+  debug(mx, mn);
+  if (mx < x && mn <= 0) {
+    cout << -1 << endl;
+    return;
+  }
+  x -= mx;
+  if (x <= 0) {
+    cout << 0 << endl;
+    return;
+  }
+  cout << (x + mn - 1) / mn << endl;
 }
 
 signed main() {

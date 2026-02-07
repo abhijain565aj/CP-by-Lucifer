@@ -62,43 +62,77 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
+  int n;
+  cin >> n;
+  vector<set<int>> adj(n);
+  fo(i, n - 1) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u].insert(v);
+    adj[v].insert(u);
+  }
+  vector<array<int, 3>> ans;
+  map<int, int> dist;
+  map<int, int> par;
+  queue<int> q;
+  auto remove = [&](auto&& remove, int u) -> void {
+    dist.clear();
+    par.clear();
+    auto dfs = [&](auto&& dfs, int u, int p) -> void {
+      par[u] = p;
+      for (auto c : adj[u]) {
+        if (c == p) continue;
+        dist[c] = dist[u] + 1;
+        dfs(dfs, c, u);
+      }
+    };
+    dfs(dfs, u, -1);
+    int mxd = 0, mxi = u;
+    for (auto [nd, d] : dist)
+      if (d > mxd)
+        mxd = d, mxi = nd;
+      else if (d == mxd)
+        mxi = max(mxi, nd);
+
+    dist.clear();
+    par.clear();
+    dfs(dfs, mxi, -1);
+    int mxd1 = 0, mxi1 = mxi;
+    for (auto [nd, d] : dist)
+      if (d > mxd1)
+        mxd1 = d, mxi1 = nd;
+      else if (d == mxd1)
+        mxi1 = max(mxi1, nd);
+
+    vi diameter;
+    diameter.pb(mxi1);
+    int curr = mxi1;
+    while (par[curr] != -1) {
+      curr = par[curr];
+      diameter.pb(curr);
+    }
+    debug(diameter);
+    set<int> dm(all(diameter));
+    for (auto pt : diameter) {
+      for (auto nd : adj[pt]) {
+        adj[nd].erase(pt);
+        if (dm.find(nd) == dm.end())
+          q.push(nd);
       }
     }
-    swap(segs, new_segs);
+    ans.pb({mxd1 + 1, max(mxi1, mxi), min(mxi1, mxi)});
   };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+  q.push(0);
+  while (!q.empty()) {
+    int u = q.front();
+    q.pop();
+    remove(remove, u);
+  }
+  sortall(ans);
+  reverse(all(ans));
+  for (auto [i, j, k] : ans) {
+    cout << i << " " << j + 1 << " " << k + 1 << " ";
   }
   cout << endl;
 }

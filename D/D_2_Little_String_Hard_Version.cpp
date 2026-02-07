@@ -62,45 +62,60 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
+  int n, c;
+  cin >> n >> c;
+  string s;
+  cin >> s;
+  if (s[0] == '0' || s[n - 1] == '0') {
+    cout << -1 << endl;
+    return;
+  }
+  s[0] = s[n - 1] = '1';
+  int ans = 1;
+  vi val;
+  for (int i = 1; i < n; i++) {
+    if (s[i - 1] == '1') {
+      ans *= 2;
+      if (c % 2 == 0) {
+        c /= 2;
+      }
+    } else if (s[i - 1] == '0') {
+      ans *= (i - 1);
+      c /= __gcd(c, i - 1);
+    } else {
+      if ((i - 1) % 2 == 0) {
+        ans *= 2;
+        if (c % 2 == 0) {
+          c /= 2;
+        }
+      } else if (i - 1 != 1) {
+        val.pb(i - 1);
       }
     }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+    ans %= MOD;
   }
-  cout << endl;
+  if (c == 1) {
+    cout << -1 << endl;
+    return;
+  }
+  if ((c & (c - 1)) == 0) {
+    reverse(all(val));
+    for (auto x : val) {
+      if (c != 2) {
+        ans *= 2;
+        ans %= MOD;
+        c /= 2;
+      } else {
+        ans = (ans * (x)) % MOD;
+      }
+    }
+  } else {
+    fo(i, val.size()) {
+      ans = (ans * 2) % MOD;
+    }
+  }
+  debug(val, c);
+  cout << ans << endl;
 }
 
 signed main() {

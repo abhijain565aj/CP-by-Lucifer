@@ -62,45 +62,27 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
-      }
+  int n, k;
+  cin >> n >> k;
+  vi a(n);
+  read(a, n);
+  v(v(pii)) dp(n, v(pii)(k + 1, {-1, -1}));
+  auto fn = [&](auto&& fn, int i, int cards) -> pii {
+    if (i < 0) return {0, 0};
+    if (cards < 0) return {-INF, -INF};
+    if (dp[i][cards].F != -1) return dp[i][cards];
+    pii mx_res = {0, 0};
+    for (int j = 0; j <= min(cards, a[i]); j++) {
+      pii res = fn(fn, i - 1, cards - j);
+      int mx = max(j, res.S) - res.S;
+      mx_res = max(mx_res, {res.F + mx * (n - i), mx + res.S});
     }
-    swap(segs, new_segs);
+    return dp[i][cards] = max(mx_res, fn(fn, i, cards - 1));
   };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
-  }
-  cout << endl;
+  int ans = 0;
+  // fo(i, k + 1) ans = max(ans, fn(fn, n - 1, i).F);
+  ans = fn(fn, n - 1, k).F;
+  cout << ans << "\n";
 }
 
 signed main() {

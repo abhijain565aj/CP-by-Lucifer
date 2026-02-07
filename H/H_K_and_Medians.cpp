@@ -62,45 +62,34 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
-      }
-    }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
+  int n, k, m;
+  cin >> n >> k >> m;
+  vi a(n);
+  fo(i, m) {
     int x;
     cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+    a[x - 1] = 1;
   }
-  cout << endl;
+  debug(n, k, m);
+  if ((n - m) % (k - 1)) {
+    debug(n - m, k - 1);
+    cout << "NO" << endl;
+    return;
+  }
+  vi er;
+  fo(i, n) if (!a[i]) er.pb(i);
+  debug(er);
+  fo(i, n) if (a[i]) {
+    int cnt1 = lower_bound(all(er), i) - er.begin();
+    int cnt2 = er.size() - cnt1;
+    debug(i, cnt1, cnt2);
+    if (cnt1 >= (k - 1) / 2 && cnt2 >= (k - 1) / 2) {
+      cout << "YES" << endl;
+      return;
+    }
+  }
+  cout << "NO" << endl;
+  // 1 2 3 4 (567) 8 9
 }
 
 signed main() {

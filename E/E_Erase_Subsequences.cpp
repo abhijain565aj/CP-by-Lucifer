@@ -62,45 +62,25 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
+  string s, t;
+  cin >> s >> t;
+  // reverse(all(s));
+  // reverse(all(t));
+  int lp = 0;
+  int n = t.size();
+  fo(i, 2) {
+    debug(s, t, lp);
+    string s1 = "";
+    for (auto c : s) {
+      if (lp < n && c == t[lp]) {
+        lp++;
       } else {
-        new_segs.pb(segs[i]);
+        s1 += c;
       }
     }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+    swap(s, s1);
   }
-  cout << endl;
+  YN(lp == n);
 }
 
 signed main() {

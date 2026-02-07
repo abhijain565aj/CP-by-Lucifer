@@ -62,45 +62,52 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
-      }
-    }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+  int n;
+  cin >> n;
+  string s;
+  cin >> s;
+  vi cnt(2, 0);
+  fo(i, n) cnt[s[i] - '0']++;
+  if (cnt[1] == 0) {
+    cout << -1 << endl;
+    return;
   }
-  cout << endl;
+  if (s == "1") {
+    cout << 0 << endl;
+    return;
+  }
+  // cost can be only n, n+1, n+2, n+3
+  if (cnt[1] >= cnt[0]) {
+    cout << n << endl;
+    return;
+  }
+  vi pref(n), suff(n);
+  pref[0] = (s[0] == '1' ? 1 : -1);
+  fo1(i, 1, n) pref[i] = pref[i - 1] + (s[i] == '1' ? 1 : -1);
+  suff[n - 1] = (s[n - 1] == '1' ? 1 : -1);
+  re1(i, n - 2, 0) suff[i] = suff[i + 1] + (s[i] == '1' ? 1 : -1);
+  int mx = max(*max_element(all(suff)), *max_element(all(pref)));
+  if (mx > 0) {
+    cout << n + 1 << endl;
+    return;
+  }
+  debug(pref, suff);
+  if (pref[n - 2] == 0 || s[1] == 0) {
+    cout << n + 1 << endl;
+    return;
+  }
+
+  if (mx == 0) {
+    cout << n + 2 << endl;
+    return;
+  }
+  fo(i, n - 1) {
+    if (s[i] == '1' && s[i + 1] == '1') {
+      cout << n + 2 << endl;
+      return;
+    }
+  }
+  cout << n + 3 << endl;
 }
 
 signed main() {

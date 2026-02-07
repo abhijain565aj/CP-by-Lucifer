@@ -62,45 +62,37 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
+  int n;
+  cin >> n;
+  vvi adj(n);
+  fo(i, n - 1) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u].pb(v);
+    adj[v].pb(u);
+  }
+  auto query = [&](int u, int v) -> bool {
+    cout << "? " << u + 1 << " " << v + 1 << endl;
+    int res;
+    cin >> res;
+    return res;
+  };
+  vi parent(n);
+  auto dfs = [&](int u, int p, auto& dfs) -> void {
+    parent[u] = p;
+    for (auto v : adj[u]) {
+      if (v != p) {
+        dfs(v, u, dfs);
       }
     }
-    swap(segs, new_segs);
   };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+  vi nodes(n);
+  fo(i, n) nodes[i] = i;
+  while (nodes.size() > 2) {
+    int u = nodes[0];
+    int v = nodes[1];
   }
-  cout << endl;
 }
 
 signed main() {

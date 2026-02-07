@@ -29,7 +29,7 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #define re(i, n) for (int i = n - 1; i >= 0; i--)
 #define loop(i, a, b) for (int i = a; (a >= b) ? i >= b : i <= b; (a >= b) ? i-- : i++)
 
-#define YN(possible) cout << ((possible) ? "YES" : "NO") << endl;
+#define YN(possible) cout << ((possible) ? "Y" : "N") << endl;
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define F first
@@ -54,7 +54,7 @@ ostream& operator<<(ostream& os, const T_container& v) {
   os << '[';
   string sep;
   for (const T& x : v) os << sep << x, sep = ", ";
-  return os << ']' << "\n";
+  return os << ']';
 }
 template <typename A, typename B>
 ostream& operator<<(ostream& os, const pair<A, B>& p) { return os << '(' << p.first << ", " << p.second << ')'; }
@@ -134,92 +134,111 @@ signed main() {
   precompute_fac();
   sieve();
 
-  int testCases = 333;
-  //   cin >> testCases;
+  int testCases = 1;
   fo(tt, testCases) {
     solve();
   }
 }
 
-void solve() {
-  int n;
-  cin >> n;
-  // n = 5;
-  if (n > 3) {
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        if (i == 2 && j == 2)
-          cout << 1;
-        else
-          cout << 0;
-      }
-      cout << endl;
-    }
-    string s;
-    cin >> s;
-    if (s == "CORRECT") {
-      return;
-    }
-    vs ans(n - 2);
-    for (auto& x : ans)
-      cin >> x;
-    vvi holes(3, vi(3));
-    for (int i = 0; i < 3; i++)
-      for (int j = 0; j < 3; j++)
-        holes[i][j] = ans[2 - i][2 - j] - '0';
-    // vvi holes(3, vi(3));
-    // holes[0] = {1, 0, 1};
-    // holes[1] = {0, 0, 1};
-    // holes[2] = {1, 1, 1};
-    // fo(i, 3) fo(j, 3) holes[i][j] = rand() % 2;
-    vvi grid(n, vi(n, 1));
-    vvi fixed(n, vi(n, 0));
-    fo(i, n - 2) fo(j, n - 2) {
-      int sum = 0;
-      fo(k1, 3) fo(k2, 3) if (holes[k1][k2]) {
-        sum += grid[i + k1][j + k2];
-      }
-      sum = sum % 2;
-      fo(k1, 3) fo(k2, 3) if (holes[k1][k2]) {
-        if (sum == 0 && fixed[i + k1][j + k2] == 0) {
-          grid[i + k1][j + k2] ^= 1;
-          sum = (sum + 1) % 2;
-        }
-        fixed[i + k1][j + k2] = 1;
-      }
-    }
-    // debug(grid);
-    // fo(i, n - 2) fo(j, n - 2) {
-    //   int sum = 0;
-    //   re(k1, 3) re(k2, 3) if (holes[k1][k2]) {
-    //     sum += grid[i + k1][j + k2];
-    //   }
-    //   if (sum % 2 == 0) {
-    //     debug(i, j);
-    //     debug(holes);
-    //     exit(0);
-    //   }
-    // }
-    fo(i, n) {
-      fo(j, n) cout << grid[i][j];
-      cout << endl;
-    }
-    cin >> s;
-  } else {
-    while (true) {
-      vvi grid(3, vi(3));
-      fo(i, 3) {
-        fo(j, 3) cout << rand() % 2;
-        cout << endl;
-      }
-      string s;
-      cin >> s;
-      if (s == "CORRECT") {
-        return;
-      } else {
-        int x;
-        cin >> x;
-      }
+vector<int> z_function(vi& s) {
+    int n = s.size();
+    vector<int> z(n);
+    int l = 0, r = 0;
+    for(int i = 1; i < n; i++) {
+        if(i < r) z[i] = min(r - i, z[i - l]);
+        while(i + z[i] < n && s[z[i]] == s[i + z[i]]) 
+        {z[i]++;}
+        if(i + z[i] > r) {
+            l = i, r = i + z[i];
+        }}
+    return z;
+}
+
+pair<int, int> product(pair<int, int> a, pair<int, int> b, int n, int mod){
+  return {(a.first * b.first % MOD + ((n - 1) * b.second % MOD) * a.second % MOD) % MOD, (((n - 2) * a.second) % MOD * b.second % MOD + b.first * a.second % MOD + b.second * a.first % MOD) % MOD};
+}
+
+int calc_shift(vector<int> &a, vector<int> &b, int m)
+{
+  vector<int> temp = a;
+  temp.push_back(m);
+  for (auto it: b)
+    temp.push_back(it);
+  for (auto it : b)
+    temp.push_back(it);
+
+  auto res = z_function(temp);
+  int n = a.size();
+  for (int i = n + 1; i <= 2 * n; i++) {
+    if (res[i] >= n)
+    {
+    return i - n - 1;
     }
   }
+    return -1;
+}
+
+void solve(){
+  int n, m, k;
+  cin >> n >> m >> k;
+  vi array_a(n);
+  vi array_b(n);
+  read_array(array_a, n);
+  read_array(array_b, n);
+  vi a_diff_array(n);
+  vi b_diff_array(n);
+  for (int i = 0; i < n; i++){
+    array_a[i]%=m;
+    array_b[i] %= m;
+  }
+    for (int i = 0; i < n; i++) {
+      a_diff_array[i] = (m + array_a[(i + 1) % n] - array_a[i]) % m;
+      b_diff_array[i] = m - (m + array_b[(i + 1) % n] - array_b[i]) % m;
+      if (b_diff_array[i] == m) b_diff_array[i] = 0;
+    }
+    debug(a_diff_array);
+    debug(b_diff_array);
+    vi res = z_function(a_diff_array);
+    int shift = calc_shift(a_diff_array, b_diff_array, m);
+
+    if (shift == -1)
+    {
+      cout << "0\n";
+      return;
+    }
+
+    int cyclicity = n;
+    for (int i = 0; i < n; i++) {
+        if (i+res[i]==n){
+          cyclicity = i;
+          break;
+        }
+    }
+    vector<pair<int, int>> powers_of_two;
+    powers_of_two.push_back({0, 1});
+    for (int i = 1; i < 32; i++) {
+      powers_of_two.push_back(product(powers_of_two.back(), powers_of_two.back(), n, MOD));
+    }
+    pair<int, int> prod({0,0});
+    for (int i = 0; i < 32; i++){
+        if (k&(1LL<<i)){
+            if (prod.first == prod.second && prod.first == 0){
+              prod = powers_of_two[i];
+            }
+            else
+              prod = product(prod, powers_of_two[i], n, MOD);
+        }
+    }
+    int ans = 0;
+    for (int i = 0; i < n / cyclicity; i++) {
+      int x = (shift + i * cyclicity) % n;
+      if (x==0){
+        ans += prod.first;
+      }
+          else {
+        ans += prod.second;
+      }
+      ans %= MOD;
+    }
+    cout << ans << "\n";
 }

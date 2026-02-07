@@ -60,47 +60,72 @@ typedef long double ld;
 constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
-
-void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
-      }
-    }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+vi vec(int x) {
+  vi v;
+  while (x) {
+    v.pb(x % 2);
+    x /= 2;
   }
-  cout << endl;
+  return v;
+}
+void solve() {
+  int x, y;
+  cin >> x >> y;
+  auto x1 = x, y1 = y;
+  debug(vec(x), vec(y));
+  int p = 0, q = 0;
+  int last = 32;
+  auto fn = [&](int x, int y, int last) -> pair<int, pii> {
+    for (int i = last; i <= 31; i++) {
+      x = x & (~(1 << i));
+      y = y & (~(1 << i));
+    }
+    int lt = 1 << last;
+    if (x > y) {
+      return {lt - x, {lt, y}};
+    } else {
+      return {lt - y, {x, lt}};
+    }
+  };
+  for (int i = 31; i >= 0; i--) {
+    int xbit = x & (1 << i);
+    int ybit = y & (1 << i);
+    if (xbit && !ybit) {
+      p |= xbit;
+    } else if (!xbit && ybit) {
+      q |= ybit;
+    } else if (xbit && ybit) {
+      int val1 = x + y - (1 << (i + 1)) + 1;
+      int lt = 1 << last;
+      debug(p, q, lt, x, y);
+      auto [val2, pr] = fn(x1, y1, last);
+      debug(val1, val2);
+      if (val1 <= val2) {
+        debug("1");
+        p |= xbit;
+        q |= (xbit - 1);
+      } else {
+        debug("2");
+        for (int i = last; i >= 0; i--) {
+          p = p & (~(1 << i));
+          q = q & (~(1 << i));
+        }
+        debug(pr, p, q);
+        p |= pr.F;
+        q |= pr.S;
+      }
+      break;
+    } else {
+      last = i;
+    }
+    x = x & (~(1 << i));
+    y = y & (~(1 << i));
+  }
+  // p = x, q = (~x) & y;
+  // debug(p, q, xtra);
+  int val = abs(x - p) + abs(y - q);
+  debug(val);
+  cout << p << " " << q << endl;
 }
 
 signed main() {

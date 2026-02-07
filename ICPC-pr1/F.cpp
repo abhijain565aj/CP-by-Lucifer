@@ -20,6 +20,9 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #define vb vector<bool>
 #define pii pair<int, int>
 #define v(x) vector<x>
+#define read_array(a, n) \
+  for (int i = 0; i < n; i++) cin >> a[i];
+#define read(a, n) read_array(a, n)
 #define ll long long
 
 #define fo(i, n) for (int i = 0; i < n; i++)
@@ -138,115 +141,95 @@ signed main() {
   }
 }
 
-#define a3 array<int,3>
-#define a4 array<int,4>
-
-struct Node{
-    int max_prefix;
-    int max_suffix;
-    int sum;
-    int max_total;
-    int max_individual;
-};
-
-struct SegmentTree{
-    vector<Node> tree;
-    int n;
-    SegmentTree(int n) {
-        this->n = n;
-        tree.resize(4 * n, {0,0,0,0,0});
-    }
-    void update(int pos, int new_val) {
-        updatep(1, 0, n - 1, pos, new_val);
-    }
-
-    Node query(ll l, ll r) {
-        return sump(1, 0, n - 1, l, r);
-    }
-    Node operation(const Node &left, const Node &right)
-    {
-      Node ans;
-      ans.sum = left.sum + right.sum;
-      ans.max_prefix = max(left.max_prefix, left.sum + right.max_prefix);
-      ans.max_suffix = max(right.max_suffix, right.sum + left.max_suffix);
-      ans.max_total = max({left.max_total, right.max_total, left.max_suffix + right.max_prefix});
-      ans.max_individual = max(left.max_individual, right.max_individual);
-      return ans;
-    }
-
-    Node sump(ll v, ll tl, ll tr, ll l, ll r) {
-    if (l == tl && r == tr) {
-      return tree[v];
-    }
-    ll tm = (tl + tr) / 2;
-    if (l > tm)
-      return sump(v * 2 + 1, tm + 1, tr, l, r);
-    if (r <= tm)
-      return sump(v * 2, tl, tm, l, r);
-    return operation(sump(v * 2, tl, tm, l, tm), sump(v * 2 + 1, tm + 1, tr, tm + 1, r));
-  }
-
-    void updatep(ll v, ll tl, ll tr, ll pos, int new_val) {
-    if (tl == tr) {
-      tree[v].sum = tree[v].max_individual = new_val;
-      tree[v].max_prefix = tree[v].max_suffix = tree[v].max_total = max(0ll, new_val);
-    } else {
-      ll tm = (tl + tr) / 2;
-      if (pos <= tm) {
-        updatep(v * 2, tl, tm, pos, new_val);
-      } else {
-        updatep(v * 2 + 1, tm + 1, tr, pos, new_val);
-      }
-      tree[v] = operation(tree[v * 2], tree[v * 2 + 1]);
-    }
-  }
-
-};
-
 void solve(){
-  int n, m;
-  cin >> n >> m;
-  vector<array<int, 3> > events;
-  
-  fo(i, m)
-  {
-    int l, r, x;
-    cin >> l >> r >> x;
-    events.pb({l,i,x});
-    events.pb({r + 1, i, 0});
-  }
-  sort(all(events));
-  reverse(all(events));
-  int q;
-  cin >> q;
-  vector<a4> queries(q);
-  fo(i,q)
-  {
-    cin >> queries[i][0] >> queries[i][1] >> queries[i][2];
-    queries[i][1]--;
-    queries[i][2]--;
-    queries[i][3] = i;
-  }
-  sort(all(queries));
-
-  SegmentTree seg(m);
-  vi ans(q);
-
-  debug(events);
-  debug(queries);
-
-  for (int i = 0; i < q; i++)
-  {
-    int k = queries[i][0];
-    while (events.size() && events.back()[0] <= k)
-    {
-      seg.update(events.back()[1], events.back()[2]);
-      events.pop_back();
+  string s;
+  cin >> s;
+  int n = s.size();
+  int pl = 0;
+  int pr = 0;
+  int gl = 0;
+  int gr = 0;
+  int serving = 1;
+  int go = 0;
+  for (int i = 0; i < n; i++) {
+    if (s[i]=='S'){
+        if (serving){
+          pl++;
+          if (((pl >= 5) && (pl - pr >= 2)) || pl==10){
+            pl = 0;
+            pr = 0;
+            gl++;
+          }
+          if (((pr >= 5) && (pr - pl >= 2)) || pr==10){
+            pl = 0;
+            pr = 0;
+            gr++;
+          }
+        }
+        else {
+          pr++;
+          if (((pl >= 5) && (pl - pr >= 2)) || pl==10){
+            pl = 0;
+            pr = 0;
+            gl++;
+          }
+          if (((pr >= 5) && (pr - pl >= 2)) || pr==10){
+            pl = 0;
+            pr = 0;
+            gr++;
+          }
+        }
     }
-    auto node = seg.query(queries[i][1], queries[i][2]);
-    ans[queries[i][3]] = (node.max_individual < 0 ? node.max_individual : node.max_total);
-  }
+    else if (s[i] == 'R'){
+        if (serving){
+          pr++;
+          if (((pl >= 5) && (pl - pr >= 2)) || pl==10){
+            pl = 0;
+            pr = 0;
+            gl++;
+          }
+          if (((pr >= 5) && (pr - pl >= 2)) || pr==10){
+            pl = 0;
+            pr = 0;
+            gr++;
+          }
+        }
+        else {
+          pl++;
+          if (((pl >= 5) && (pl - pr >= 2)) || pl==10){
+            pl = 0;
+            pr = 0;
+            gl++;
+          }
+          if (((pr >= 5) && (pr - pl >= 2)) || pr==10){
+            pl = 0;
+            pr = 0;
+            gr++;
+          }
+        }
+        serving = 1 - serving;
+    }
+    else {
+        if (go==0){
+            if (serving)
+        cout << gl << " (" << pl << "*)" << " - " << gr << " (" << pr << ")\n";
+        else {
+        cout << gl << " (" << pl << ")" << " - " << gr << " (" << pr << "*)\n";
 
-for (auto it : ans)
-    cout << it << "\n";
+        }
+
+        }
+        else {
+            if (gl==2)
+          cout << gl << " (winner) - " << gr << "\n";
+          else {
+          cout << gl << " - " << gr << " (winner)\n";
+
+          }
+        }
+    }
+    if (gl==2 || gr==2){
+      go = 1;
+    }
+  }
 }

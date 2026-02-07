@@ -62,45 +62,40 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  map<int, int> pos;
+  fo(i, n) pos[a[i]] = i + 1;
+  auto ask = [&](int x, int y) -> bool {
+    cout << "? " << x << " " << y << endl;
+    int x1, y1;
+    cin >> x1 >> y1;
+    if (x1 == x && y1 == y) {
+      swap(a[x - 1], a[y - 1]);
+      pos[a[x - 1]] = x;
+      pos[a[y - 1]] = y;
+      return true;
+    } else {
+      swap(a[x1 - 1], a[y1 - 1]);
+      pos[a[x1 - 1]] = x1;
+      pos[a[y1 - 1]] = y1;
+      return false;
+    }
+  };
+  for (int i = 1; i <= n; i++) {
+    while (true) {
+      if (a[i - 1] != i) {
+        ask(i, pos[i]);
+      } else if (a[n - i] != n - i + 1) {
+        ask(n - i + 1, pos[n - i + 1]);
       } else {
-        new_segs.pb(segs[i]);
+        break;
       }
     }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
   }
-  cout << endl;
+  cout << "!" << endl;
 }
 
 signed main() {

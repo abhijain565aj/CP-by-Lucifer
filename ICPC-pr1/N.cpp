@@ -20,6 +20,10 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #define vb vector<bool>
 #define pii pair<int, int>
 #define v(x) vector<x>
+#define read_array(a, n) \
+  for (int i = 0; i < n; i++) cin >> a[i];
+#define read(a, n) read_array(a, n)
+#define ll long long
 
 #define fo(i, n) for (int i = 0; i < n; i++)
 #define re(i, n) for (int i = n - 1; i >= 0; i--)
@@ -73,7 +77,7 @@ void file(string s = "") {
 
 /// MATH
 constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int N = 32e6;
 constexpr int INF = 1e18;
 
 int power(int a, int n) {
@@ -107,12 +111,16 @@ int nCr(int n, int r) {
 }
 
 vb prime;
+vi p;
 void sieve(int n = 0) {
   if (n == 0) return;
   prime.resize(n, true);
   prime[0] = prime[1] = false;
-  for (int i = 2; i * i < n; i++) {
-    if (!prime[i]) continue;
+  for (int i = 2; i < n; i++) {
+    if (!prime[i])
+      continue;
+    else
+      p.pb(i);
     for (int j = i * i; j < n; j += i) {
       prime[j] = false;
     }
@@ -128,7 +136,7 @@ signed main() {
 
   file();
   precompute_fac();
-  sieve();
+  sieve(N);
 
   int testCases = 1;
   // cin >> testCases;
@@ -138,11 +146,30 @@ signed main() {
 }
 
 void solve() {
-  int n;
-  cin >> n;
-  vi a(n);
-  for (auto& x : a) cin >> x;
-  int sum = accumulate(all(a), 0ll);
-  int mx = *max_element(all(a));
-  cout << min(sum / 3, sum - mx) << endl;
+  int m, n, k;
+  cin >> m >> n >> k;
+  vi c(n);
+  read(c, n);
+  vi ans(m + 1);
+  vector<array<int, 3>> arr(k);
+  for (auto& [x, y, z] : arr) cin >> x >> y >> z;
+  sort(all(arr));
+  debug(arr);
+  int pp = 0;
+  for (auto& [m1, n1, ct] : arr) {
+    // debug(m1,n1,ct)
+    if (ans[m1] != 0) {
+      fo(i, ct) c[n1 - 1] /= ans[m1];
+      continue;
+    }
+    while (pp < p.size() && c[n1 - 1] % p[pp]) pp++;
+    if (pp == p.size())
+      ans[m1] = c[n1 - 1];
+    else {
+      ans[m1] = p[pp];
+      fo(i, ct) c[n1 - 1] /= p[pp];
+      pp++;
+    }
+  }
+  for (int i = 1; i <= m; i++) cout << ans[i] << " ";
 }

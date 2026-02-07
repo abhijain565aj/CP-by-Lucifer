@@ -20,6 +20,10 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #define vb vector<bool>
 #define pii pair<int, int>
 #define v(x) vector<x>
+#define read_array(a, n) \
+  for (int i = 0; i < n; i++) cin >> a[i];
+#define read(a, n) read_array(a, n)
+#define ll long long
 
 #define fo(i, n) for (int i = 0; i < n; i++)
 #define re(i, n) for (int i = n - 1; i >= 0; i--)
@@ -72,8 +76,8 @@ void file(string s = "") {
 }
 
 /// MATH
-constexpr int MOD = 998244353;
-constexpr int N = 2e5 + 1;
+constexpr int MOD = 1000000007;
+constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 int power(int a, int n) {
@@ -101,9 +105,11 @@ void precompute_fac(int n = 0) {
   }
 }
 
+int dp[51][51];
+
 int nCr(int n, int r) {
   if (n < 0 || r < 0 || r > n) return 0;
-  return fac[n] * (fi[r] * fi[n - r] % MOD) % MOD;
+  return dp[n][r];
 }
 
 vb prime;
@@ -126,57 +132,50 @@ signed main() {
   cin.tie(0);
   cout.tie(0);
 
+  dp[0][0] = 1;
+  dp[1][0] = 1;
+  dp[1][1] = 1;
+  for (int i = 2 ; i <= 50 ; i++)
+  {
+    dp[i][0] = dp[i][i] = 1;
+    for (int j = 1; j < i ; j++)
+    {
+        dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+    }
+  }
+
   file();
-  precompute_fac(N);
+  precompute_fac();
   sieve();
 
   int testCases = 1;
-  // cin >> testCases;
+#ifndef ONLINE_JUDGE
+  cin >> testCases;
+#endif
   fo(tt, testCases) {
     solve();
   }
 }
 
-void solve() {
-  int n, m;
-  cin >> n >> m;
-  string s;
-  cin >> s;
-  string t;
-  cin >> t;
-  vector<int> counts(26,0);
-  for (int i = 0; i < n; i++){
-    counts[s[i] - 'A']++;
-  }
-  vector<int> counts2(26, 0);
-  for (int i = 0; i < m; i++){
-    counts2[t[i] - 'A']++;
-  }
-  int num_permutations = fac[n];
-  for (int i = 0; i < 26; i++){
-    num_permutations*=fi[counts[i]];
-    num_permutations %= MOD;
-  }
-  vector<int> suffix_sum_dp_of_excess(m+1, 0);
-  suffix_sum_dp_of_excess[0] = 1;
-  for (int i = 25; i >= 0; i--) {
-    vector<int> dp_of_excess(m+1, 0);
-    for (int t = 0; t <= counts2[i]; t++){
-        if (t+counts[i]-counts2[i]>m) continue;
-        if (t + counts[i] - counts2[i] < 0) dp_of_excess[t] = 0;
-        else
-        dp_of_excess[t] = suffix_sum_dp_of_excess[max((long long)0, t + counts[i] - counts2[i])]*nCr(counts[i], t+counts[i]-counts2[i]);
-        dp_of_excess[t] %= MOD;
-    }
-    for (int t = m - 1; t >= 0; t--) {
-      dp_of_excess[t] += dp_of_excess[t + 1];
-      dp_of_excess[t] %= MOD;
-    }
-    suffix_sum_dp_of_excess = dp_of_excess;
-    debug(char('A' + i));
-    debug(suffix_sum_dp_of_excess);
-  }
-  int ans = num_permutations * suffix_sum_dp_of_excess[0];
-  ans %= MOD;
-  cout << ans;
+void solve(){
+  int n, k;
+  cin >> n >> k;
+  vi a(n);
+  read(a, n);
+  int l, r;
+  cin >> l >> r;
+  sort(all(a));
+
+  function<int(int, int, int)> compute = [&](int val, int cnt, int max_idx) -> int {
+    if (val < a[0])
+      return cnt == 0 && val == 0;
+    if (cnt == 0)
+      return 1;
+    if (max_idx < 0)
+      return 0;
+    int idx = upper_bound(a.begin(), next(a.begin() + max_idx), val) - a.begin() - 1;
+    return nCr(idx, cnt) + compute(val - a[idx], cnt - 1, idx - 1);
+  };
+
+  cout << compute(r, k, n - 1) - compute(l - 1, k, n - 1) << "\n";
 }

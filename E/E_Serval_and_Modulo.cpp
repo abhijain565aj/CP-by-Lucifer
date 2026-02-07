@@ -62,45 +62,36 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
-      }
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  vi b(n);
+  read(b, n);
+  sortall(b);
+  int sum = accumulate(all(a), 0ll) - accumulate(all(b), 0ll);
+  vi fac;
+  for (int k = 1; k <= sqrt(sum); k++) {
+    if (sum % k == 0) {
+      fac.pb(k);
+      if (k != sum / k) fac.pb(sum / k);
     }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
   }
-  cout << endl;
+  fac.pb(1e6 + 1);
+  sortall(fac);
+  auto check = [&](int k) -> bool {
+    auto c = a;
+    fo(i, n) c[i] %= k;
+    sortall(c);
+    return c == b;
+  };
+  for (auto x : fac) {
+    if (check(x)) {
+      cout << x << "\n";
+      return;
+    }
+  }
+  cout << -1 << "\n";
 }
 
 signed main() {

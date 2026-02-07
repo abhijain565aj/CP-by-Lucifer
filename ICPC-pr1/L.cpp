@@ -20,6 +20,10 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #define vb vector<bool>
 #define pii pair<int, int>
 #define v(x) vector<x>
+#define read_array(a, n) \
+  for (int i = 0; i < n; i++) cin >> a[i];
+#define read(a, n) read_array(a, n)
+#define ll long long
 
 #define fo(i, n) for (int i = 0; i < n; i++)
 #define re(i, n) for (int i = n - 1; i >= 0; i--)
@@ -131,37 +135,110 @@ signed main() {
   sieve();
 
   int testCases = 1;
-  // cin >> testCases;
+#ifndef ONLINE_JUDGE
+  cin >> testCases;
+#endif
   fo(tt, testCases) {
     solve();
   }
 }
 
-void solve() {
-  int n, k;
-  cin >> n >> k;
-  if (k < n / 2 || k == n) {
-    cout << -1 << endl;
-    return;
+void solve(){
+  int n, m;
+  cin >> n >> m;
+  vector<string> grid(n);
+  read(grid, n);
+  vector<vector<unordered_set<int> > > indices(n, vector<unordered_set<int> >(m));
+  int num;
+  cin >> num;
+  string s;
+  unordered_map<string, int> mp;
+  for (int i = 0; i < num; i++)
+ {
+    cin >> s;
+    sort(all(s));
+    mp[s] = i;
   }
-  int half = n / 2;
-  int delta = k - half;
-  string s = "";
-  bool other = false;
-  if (half & 1 && delta & 1) other = true, half--, delta++;
-  fo(i, half / 2) {
-    s += "(";
-    if (delta > 1) {
-      s += ")";
-      delta -= 2;
+
+  auto set_path = [&](int x1, int y1, int x2, int y2, int idx) {
+    debug(x1, y1, x2, y2, idx);
+    if (x1 == x2) {
+      for (int i = min(y1,y2); i <= max(y1,y2); i++)
+        indices[x1][i].insert(idx);
+    } else if (y1 == y2) {
+      for (int i = min(x1, x2); i <= max(x1, x2); i++)
+        indices[i][y1].insert(idx);
+    } else if (x1 + y1 == x2 + y2) {
+      for (int x = min(x1, x2); x <= max(x1, x2); x++)
+        indices[x][x1 + y1 - x].insert(idx);
+    } else if (x1 - y1 == x2 - y2) {
+      for (int x = min(x1, x2); x <= max(x1, x2); x++)
+        indices[x][y1 - x1 + x].insert(idx);
+    } else {
+      assert(false);
     }
-  }
-  auto c = s;
-  reverse(all(c));
-  if (half & 1) s += "(";
-  if (delta & 1) s += ")";
-  s += c;
-  if (other) s = "(" + s;
-  while (s.size() != n) s += ")";
-  cout << s << endl;
+  };
+
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      string curr;
+
+      int x = i, y = j;
+      for (;x < n && y < m;x++)
+      {
+        curr.push_back(grid[x][y]);
+        sort(all(curr));
+        if (mp.find(curr) != mp.end())
+        {
+          set_path(i, j, x, y, mp[curr]);
+        }
+      }
+      curr.clear();
+
+
+      x = i, y = j;
+      for (;x < n && y < m;y++)
+      {
+        curr.push_back(grid[x][y]);
+        sort(all(curr));
+        if (mp.find(curr) != mp.end())
+        {
+          set_path(i, j, x, y, mp[curr]);
+        }
+      }
+      curr.clear();
+
+      x = i, y = j;
+      for (;x < n && y < m;y++,x++)
+      {
+        curr.push_back(grid[x][y]);
+        sort(all(curr));
+        if (mp.find(curr) != mp.end())
+        {
+          set_path(i, j, x, y, mp[curr]);
+        }
+      }
+      curr.clear();
+
+       x = i, y = j;
+      for (;x < n && y >= 0;y--,x++)
+      {
+        curr.push_back(grid[x][y]);
+        sort(all(curr));
+        if (mp.find(curr) != mp.end())
+        {
+          set_path(i, j, x, y, mp[curr]);
+        }
+      }
+      curr.clear();
+    }
+    }
+    debug(indices);
+
+    int ans = 0;
+    for (int i = 0; i < n; i++)
+      for (int j = 0; j < m; j++)
+        if (indices[i][j].size() > 1)
+          ans++;
+  cout << ans << "\n";
 }

@@ -20,6 +20,10 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #define vb vector<bool>
 #define pii pair<int, int>
 #define v(x) vector<x>
+#define read_array(a, n) \
+  for (int i = 0; i < n; i++) cin >> a[i];
+#define read(a, n) read_array(a, n)
+#define ll long long
 
 #define fo(i, n) for (int i = 0; i < n; i++)
 #define re(i, n) for (int i = n - 1; i >= 0; i--)
@@ -131,138 +135,54 @@ signed main() {
   sieve();
 
   int testCases = 1;
-  cin >> testCases;
+//   cin >> testCases;
   fo(tt, testCases) {
     solve();
   }
 }
 
-deque<pair<int, int>> result(string& s){
-  int n = s.size();
-  deque<pair<int, int>> lengths;
-  lengths.push_back({s[0] - '0', 1});
-  for (int i = 1; i < n; i++) {
-    if (s[i]-'0' == lengths.back().first) lengths.back().second++;
-    else
-      lengths.push_back({s[i] - '0', 1});
-  }
-  while (lengths.size()>=3 || (lengths.size()==2 && lengths.front().first==1)){
-    if (lengths.front().first==1){
-        if (lengths.front().second%2==1){
-          pair<int, int> it1 = lengths.front();
-          lengths.pop_front();
-          auto it2 = lengths.front();
-          lengths.pop_front();
-          it2.second--;
-          it1.second++;
-          if (it2.second == 0) {
-            if (lengths.size()>=1){
-              lengths.front().second += it1.second;
-            }
-            else {
-              lengths.push_back(it1);
-            }
-          }
-          else {
-            lengths.push_front(it2);
-            lengths.push_front(it1);
-          }
-        }
-        else {
-          auto it1 = lengths.front();
-          lengths.pop_front();
-          auto it2 = lengths.front();
-          lengths.pop_front();
-          it2.second--;
-          if (it2.second == 0) {
-            if (lengths.size()>=1){
-              lengths.front().second += it1.second;
-            }
-            else {
-              lengths.push_front(it1);
-            }
-            lengths.push_front({0, 1});
-          } else {
-            lengths.push_front(it2);
-            lengths.push_front(it1);
-            lengths.push_front({0, 1});
-          }
-        }
-    }
-    else {
-      auto it1 = lengths.front();
-      lengths.pop_front();
-      auto it2 = lengths.front();
-      lengths.pop_front();
-      auto it3 = lengths.front();
-      lengths.pop_front();
-      if (it2.second%2==0){
-        it1.second += 1;
-        it3.second -= 1;
-        if (it3.second==0){
-            if (lengths.size()>=1){
-              lengths.front().second += it2.second;
-              lengths.push_front(it1);
-            } else {
-              lengths.push_front(it2);
-              lengths.push_front(it1);
-            }
-          } else {
-            lengths.push_front(it3);
-            lengths.push_front(it2);
-            lengths.push_front(it1);
-          }
-        }
-        else {
-          it2.second += 2;
-          it1.second -= 1;
-          it3.second -= 1;
-          if (it3.second == 0){
-            if (lengths.size()>=1){
-              lengths.front().second += it2.second;
-              if (it1.second) lengths.push_front(it1);
-            }
-            else {
-              lengths.push_front(it2);
-              if (it1.second) lengths.push_front(it1);
-            }
-          }
-          else {
-            lengths.push_front(it3);
-            lengths.push_front(it2);
-            if (it1.second) lengths.push_front(it1);
-          }
-        }
-      }
-  }
-  return lengths;
-}
-
 void solve(){
   int n;
   cin >> n;
-  string s;
-  cin >> s;
-  string t;
-  cin >> t;
-  auto it1 = result(s);
-  auto it2 = result(t);
-  debug(result(s));
-  debug(result(t));
-  if (it1.back().first==0 || it2.back().first==0){
-    if (it2.back().first==0 && it1.back().first==0){
-      cout << "YES\n";
+  vector<vector<int> > grid(10, vector<int>(10));
+  for (int i = 0; i < n; i++)
+  {
+    int d, l, r, c;
+    cin >> d >> l >> r >> c;
+    r--;
+    c--;
+    if (d == 0 && c + l - 1 >= 10)
+    {
+      cout << "N\n";
       return;
     }
-    cout << "NO\n";
-    return;
+    if (d == 1 && r + l - 1 >= 10)
+    {
+        cout << "N\n";
+        return;
+    }
+    if (d == 0)
+    {
+      for (int i = 0; i < l; i++)
+        grid[r][c + i]++;
+    }
+    else
+    {
+        for (int i = 0; i < l; i++)
+            grid[r + i][c]++;
+    }
   }
-  if ((it1.back().second+1)/2 == (it2.back().second+1)/2){
-    cout << "YES\n";
-    return;
+  for (int i = 0; i < 10; i++)
+  {
+    for (int j = 0; j < 10; j++)
+    {
+        if (grid[i][j] > 1)
+        {
+            cout << "N\n";
+            return;
+        }
+    }
   }
-  else {
-    cout << "NO\n";
+  cout << "Y\n";
     return;
-  }
 }

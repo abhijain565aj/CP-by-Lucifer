@@ -76,7 +76,7 @@ void file(string s = "") {
 }
 
 /// MATH
-constexpr int MOD = 1000000007;
+constexpr int MOD = 1e9 + 7;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
@@ -90,6 +90,9 @@ int power(int a, int n) {
   return ans;
 }
 
+int inverse(int n) {
+  return power(n, MOD - 2);
+}
 vi fac, fi, inv;
 
 void precompute_fac(int n = 0) {
@@ -135,42 +138,67 @@ signed main() {
   sieve();
 
   int testCases = 1;
-//   cin >> testCases;
+  // cin >> testCases;
   fo(tt, testCases) {
     solve();
   }
 }
 
-void solve(){
+void solve() {
   int n;
   cin >> n;
-  vvi adj(n + 1);
-  vvi rev_adj(n + 1);
-  vi indegree(n + 1);
-  vi rev_indegree(n + 1);
-  fo(i, n - 1) {
-    int u, v;
-    cin >> u >> v;
-    adj[u].pb(v);
-    rev_adj[v].pb(u);
-    indegree[v]++;
-    rev_indegree[u]++;
-  }
-  loop(i,1,n)
-  {
-    sort(all(adj[i]));
-    sort(all(rev_adj[i]));
-  }
-  queue<int> q;
-  loop(i,1,n)
-  {
-    if (!rev_indegree[i])
-    {
-      q.push(i);
+  vector<int> p(n, -1);
+  fo(i, n - 1) cin >> p[i + 1], p[i + 1]--;
+  vvi adj(n);
+  fo(i, n) if (p[i] != -1) adj[p[i]].pb(i);
+  debug(adj);
+  v(vi) dp(n, vi(2, -1));  // 0 = all, 1 = not all
+  auto dfs = [&](auto& dfs, int nd, int t) -> int {
+    if (dp[nd][t] != -1) return dp[nd][t];
+    if (adj[nd].size() == 0) {
+      return dp[nd][t] = 1;
     }
-  }
-  vector<pair<int,int>> ans;
-  for (int i = 1; i <= n; i++){
-    
-  }
+    int v = 1;
+    vi pref, suf;
+    for (auto c : adj[nd]) {
+      v = (v * dfs(dfs, c, 0)) % MOD;
+      pref.push_back(v);
+    }
+    v = 1;
+    for (int i = adj[nd].size() - 1; i >= 0; i--) {
+      int c = adj[nd][i];
+      v = (v * dfs(dfs, c, 0)) % MOD;
+      suf.pb(v);
+    }
+    reverse(all(suf));
+    int ans = (t == 0) ? v : 0;
+    for (int i = adj[nd].size() - 1; i >= 0; i--) {
+      int c = adj[nd][i];
+      // int temp = ((v * dfs(dfs, c, 1)) % MOD);
+      // temp = (temp * inverse(dfs(dfs, c, 0))) % MOD;
+      int p = (i == 0 ? 1 : pref[i - 1]);
+      int s = (i == (adj[nd].size() - 1) ? 1 : suf[i + 1]);
+      int temp = p * s % MOD;
+      temp = temp * dfs(dfs, c, 1) % MOD;
+      ans = (ans + temp) % MOD;
+    }
+    return dp[nd][t] = ans % MOD;
+    /*
+        if(dp[nd][t]!=-1) return dp[nd][t];
+    if(adj[nd].size()==0){
+      return dp[nd][t] = 1;
+    }
+    int v = 1;
+    for(auto c:adj[nd]) v = (v*dfs(dfs,c,0))%MOD;
+    int ans=(t==0)?v:0;
+    for(auto c:adj[nd]){
+      int temp = (((v * dfs(dfs,c,1))%MOD)*inverse(dfs(dfs,c,0)))%MOD;
+      ans = (ans+temp)%MOD;
+    }
+    return dp[nd][t]=ans%MOD;
+
+    */
+  };
+  cout << dfs(dfs, 0, 0) % MOD << endl;
+  debug(dp);
 }

@@ -24,6 +24,7 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
   for (int i = 0; i < n; i++) cin >> a[i];
 #define read(a, n) read_array(a, n)
 #define ll long long
+
 #define fo(i, n) for (int i = 0; i < n; i++)
 #define re(i, n) for (int i = n - 1; i >= 0; i--)
 #define loop(i, a, b) for (int i = a; (a >= b) ? i >= b : i <= b; (a >= b) ? i-- : i++)
@@ -76,7 +77,7 @@ void file(string s = "") {
 
 /// MATH
 constexpr int MOD = 1000000007;
-constexpr int N = 2e5 + 1;
+constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 int power(int a, int n) {
@@ -134,18 +135,67 @@ signed main() {
   sieve();
 
   int testCases = 1;
-  cin >> testCases;
   fo(tt, testCases) {
     solve();
   }
 }
 
 void solve() {
-  int n;
-  cin >> n;
-  vi a(n);
-  read(a, n);
-  vvi dp(n, vi(N));
-  dp[0][0] = 1;
-  dp[0][a[0]] += 2;
+  int n, m;
+  cin >> n >> m;
+  vvi adj(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u].pb(v);
+    adj[v].pb(u);
+  }
+  vvi A(n, vi(n));
+  vi B(n);
+  fo(i, n) {
+    for (auto c : adj[i]) A[i][c] = 1;
+    if (adj[i].size() % 2 == 0) {
+      B[i] = 1;
+    } else {
+      A[i][i] = 1;
+    }
+  }
+  debug(A);
+  debug(B);
+  for (int i = 0; i < n; i++) {
+    int first_index = -1;
+    for (int j = i; j < n; j++) {
+      if (A[j][i]) {
+        first_index = j;
+        break;
+      }
+    }
+    debug(first_index);
+    if (first_index != -1) {
+      if (first_index != i) {
+        swap(A[first_index], A[i]);
+        swap(B[first_index], B[i]);
+      }
+      //   debug(A);
+      //   debug(B);
+      for (int j = 0; j < n; j++) {
+        if (j != i && A[j][i]) {
+          for (int k = 0; k < n; k++)
+            A[j][k] = A[j][k] ^ A[i][k];
+          B[j] ^= B[i];
+        }
+      }
+    }
+  }
+  for (int i = 0; i < n; i++) {
+    int all_zeros = true;
+    for (int j = 0; j < n; j++)
+      all_zeros = all_zeros && (A[i][j] == 0);
+    if (all_zeros && B[i]) {
+      cout << "N\n";
+      return;
+    }
+  }
+  cout << "Y\n";
 }

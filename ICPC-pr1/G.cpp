@@ -20,6 +20,10 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #define vb vector<bool>
 #define pii pair<int, int>
 #define v(x) vector<x>
+#define read_array(a, n) \
+  for (int i = 0; i < n; i++) cin >> a[i];
+#define read(a, n) read_array(a, n)
+#define ll long long
 
 #define fo(i, n) for (int i = 0; i < n; i++)
 #define re(i, n) for (int i = n - 1; i >= 0; i--)
@@ -50,7 +54,7 @@ ostream& operator<<(ostream& os, const T_container& v) {
   os << '[';
   string sep;
   for (const T& x : v) os << sep << x, sep = ", ";
-  return os << "]\n";
+  return os << ']';
 }
 template <typename A, typename B>
 ostream& operator<<(ostream& os, const pair<A, B>& p) { return os << '(' << p.first << ", " << p.second << ')'; }
@@ -72,7 +76,7 @@ void file(string s = "") {
 }
 
 /// MATH
-constexpr int MOD = 998244353;
+constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
@@ -131,37 +135,23 @@ signed main() {
   sieve();
 
   int testCases = 1;
-  // cin >> testCases;
+//   cin >> testCases;
   fo(tt, testCases) {
     solve();
   }
 }
 
-void solve() {
+void solve(){
   int n;
   cin >> n;
-  vi a(n);
-  for (auto& x : a) {
-    cin >> x;
+  vector<int> a(n);
+  read(a, n);
+  int maxx = 0;
+  int curr = 0;
+  for (int i = 0; i < n; i++)
+  {
+    curr = curr + a[i];
+    maxx = max(maxx, curr);
   }
-  debug(a);
-  vvi dp(n, vi(n));
-  fo(i, n) dp[0][i] = 1;
-  for (int i = 1; i < n; i++) {
-    for (int j = 1; j <= i; j++) {
-      // i parent j
-      dp[i][j] = dp[i][j - 1];
-      if (a[i] > a[i - 1]) {
-        dp[i][j] += dp[i - 1][j] * power(2, i - j);
-      } else {
-        dp[i][j] += dp[i - 1][j - 1] * power(2, i - j);
-      }
-      dp[i][j] %= MOD;
-    }
-    for (int j = i + 1; j < n; j++) {
-      dp[i][j] = dp[i][j - 1];
-    }
-  }
-  cout << dp[n - 1][n - 1] << endl;
-  debug(dp);
+  cout << 100 + maxx;
 }

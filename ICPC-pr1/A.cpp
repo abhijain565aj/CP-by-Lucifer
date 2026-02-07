@@ -20,6 +20,10 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #define vb vector<bool>
 #define pii pair<int, int>
 #define v(x) vector<x>
+#define read_array(a, n) \
+  for (int i = 0; i < n; i++) cin >> a[i];
+#define read(a, n) read_array(a, n)
+#define ll long long
 
 #define fo(i, n) for (int i = 0; i < n; i++)
 #define re(i, n) for (int i = n - 1; i >= 0; i--)
@@ -131,62 +135,33 @@ signed main() {
   sieve();
 
   int testCases = 1;
-  // cin >> testCases;
+//   cin >> testCases;
   fo(tt, testCases) {
     solve();
   }
 }
 
 void solve(){
-  vector<string> grid(3);
-  for (int i = 0; i < 3; i++){
-    cin >> grid[i];
+  int n;
+  int minimum;
+  int maximum;
+  cin >> n >> minimum >> maximum;
+  cout << setprecision(12);
+  cout.fixed;
+  double scale = 1;
+  if (minimum == 0) {
+    minimum = 1;
+    scale = (double)(maximum + 1) / maximum;
   }
-  vector<pair<string, pair<pair<int, int>, pair<int, int>>>> current;
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
-      if (grid[i][j] != '.'){
-        current.push_back({string(1, grid[i][j]), {{i, j}, {0,0}}});
-      }
+  if (minimum > 0) {
+    vector<double> res(maximum, 0);
+    double required_sum = 0;
+    for (int i = 1; i <= n; i++) {
+      res.push_back(((required_sum)/(maximum-minimum+1))+1);
+      required_sum += res[res.size() - minimum];
+      required_sum -= res[res.size() - maximum - 1];
     }
+    debug(res);
+    cout << res[res.size() - 1]*scale << "\n";
   }
-  for (int i = 0; i < 1; i++){
-    vector<pair<string, pair<pair<int, int>, pair<int, int>>>> next;
-    for (auto &p : current){
-      string s = p.first;
-      int x = p.second.first.first;
-      int y = p.second.first.second;
-      for (int dx = -1; dx <= 1; dx++){
-        for (int dy = -1; dy <= 1; dy++){
-          if (abs(dx) + abs(dy) == 0) continue;
-          int nx = x + dx;
-          int ny = y + dy;
-          if (nx < 0 || nx >= 3 || ny < 0 || ny >= 3) continue;
-          next.push_back({s + grid[nx][ny], {{x, y}, {nx, ny}}});
-        }
-      }
-    }
-    current = next;
-  }
-  vector<pair<string, pair<pair<int, int>, pair<int, int>>>> next;
-  for (auto &p: current){
-    string s = p.first;
-    int x1 = p.second.first.first;
-    int y1 = p.second.first.second;
-    int x2 = p.second.second.first;
-    int y2 = p.second.second.second;
-    for (int dx = -1; dx <= 1; dx++){
-      for (int dy = -1; dy <= 1; dy++){
-        if (abs(dx) + abs(dy) == 0) continue;
-        int nx = x2 + dx;
-        int ny = y2 + dy;
-        if (nx==x1 && ny==y1) continue;
-        if (nx < 0 || nx >= 3 || ny < 0 || ny >= 3) continue;
-        next.push_back({s + grid[nx][ny], {{x2, y2}, {nx, ny}}});
-      }
-    }
-  }
-  current = next;
-  sort(all(current));
-  cout << current.begin()->first << endl;
 }

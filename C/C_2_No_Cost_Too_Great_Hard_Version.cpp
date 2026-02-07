@@ -58,53 +58,66 @@ typedef long double ld;
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
 constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int N = 2e5 + 1;
 constexpr int INF = 1e18;
 
+vvi pf(N);
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
+  int n;
+  cin >> n;
+  v(pii) a(n);
+  fo(i, n) cin >> a[i].S;
+  fo(i, n) cin >> a[i].F;
+  sortall(a);
+  map<int, int> fcount;
+  auto remove = [&](int x) -> void {
+    for (auto p : pf[x]) {
+      fcount[p]--;
+    }
+  };
+  auto insert = [&](int x) -> bool {
+    bool yes = false;
+    for (auto p : pf[x]) {
+      fcount[p]++;
+      if (fcount[p] > 1) {
+        yes = true;
       }
     }
-    swap(segs, new_segs);
+    return yes;
   };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+  int ans = a[0].F + a[1].F;
+  fo(i, n) if (insert(a[i].S)) {
+    cout << 0 << endl;
+    return;
   }
-  cout << endl;
+
+  // first element inc by i;
+  remove(a[0].S);
+  for (auto [p, c] : fcount)
+    if (c) {
+      ans = min(ans, a[0].F * (p - a[0].S % p));
+    }
+  insert(a[0].S);
+  fo(i, n) if (a[i].F < ans) {
+    remove(a[i].S);
+    if (insert(a[i].S + 1)) {
+      ans = a[i].F;
+    }
+    remove(a[i].S + 1);
+    insert(a[i].S);
+  }
+  cout << ans << endl;
 }
 
 signed main() {
   fastio;
+  for (int i = 2; i < N; i++) {
+    if (pf[i].empty()) {
+      for (int j = i; j < N; j += i) {
+        pf[j].pb(i);
+      }
+    }
+  }
   //   Error_file("0_Error.txt");
   int testCases = 1000;
   cin >> testCases;

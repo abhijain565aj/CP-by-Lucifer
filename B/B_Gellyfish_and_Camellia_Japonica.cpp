@@ -62,44 +62,42 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
-      }
-    }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+  int n, q;
+  cin >> n >> q;
+  vi b(n);
+  read(b, n);
+  auto ob = b;
+  vector<array<int, 3>> a(q);
+  for (auto& [x, y, z] : a) {
+    cin >> x >> y >> z;
+    x--, y--, z--;
   }
+  reverse(all(a));
+  for (auto [x, y, z] : a) {
+    if (b[z] == -1) continue;
+    auto oz = b[z];
+    b[z] = -1;
+    if (b[x] == -1) {
+      b[x] = oz;
+    } else {
+      b[x] = max(b[x], oz);
+    }
+    if (b[y] == -1) {
+      b[y] = oz;
+    } else {
+      b[y] = max(b[y], oz);
+    }
+    debug(b);
+  }
+  fo(i, n) if (b[i] == -1) b[i] = ob[i];
+  auto cp = b;
+  reverse(all(a));
+  for (auto& [x, y, z] : a) b[z] = min(b[x], b[y]);
+  if (b != ob) {
+    cout << -1 << endl;
+    return;
+  }
+  fo(i, n) cout << max(cp[i], 1ll) << " ";
   cout << endl;
 }
 

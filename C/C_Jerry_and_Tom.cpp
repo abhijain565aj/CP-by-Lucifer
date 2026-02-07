@@ -62,45 +62,58 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
+  int n, m;
+  cin >> n >> m;
+  vi par(n, -1);
+  fo(i, n - 1) par[i] = i + 1;
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    par[u - 1] = max(par[u - 1], v - 1);
+  }
+  vvi adj(n);
+  fo(i, n) if (par[i] != -1) {
+    adj[par[i]].pb(i);
+  }
+  vi st(n), dist(n);
+  int lc = 0;
+  vector<map<int, int>> mp(n);
+  auto dfs = [&](int u, int p, auto&& dfs) -> void {
+    st[u] = 1;
+    mp[u][dist[u]]++;
+    for (auto v : adj[u]) {
+      if (v == p) continue;
+      dist[v] = dist[u] + 1;
+      dfs(v, u, dfs);
+      st[u] += st[v];
+
+      if (mp[v].size() > mp[u].size()) swap(mp[u], mp[v]);
+      for (auto pr : mp[v]) {
+        lc += dist[u] * pr.S * mp[u][pr.F];
+        mp[u][pr.F] += pr.S;
       }
     }
-    swap(segs, new_segs);
   };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
+  dfs(n - 1, -1, dfs);
+  fo(i, n) {
+    int curr = (st[i] - 1) * 2;
+    for (auto v : adj[i]) {
+      curr += st[v] * (st[i] - st[v] - 1);
     }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
+    lc += curr / 2 * dist[i];
   }
-  cout << endl;
+
+  vi de;
+  fo(i, n) de.pb(dist[i]);
+  sortall(de);
+
+  int sum = 0;
+  fo(i, n) {
+    int more = lower_bound(all(de), dist[i]) - de.begin();
+    sum += dist[i] * (n - more - 1);
+  }
+  debug(sum, lc);
+  cout << sum - lc << endl;
 }
 
 signed main() {

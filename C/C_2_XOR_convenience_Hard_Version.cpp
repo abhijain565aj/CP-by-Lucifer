@@ -62,45 +62,47 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve() {
-  int n, m, q;
-  cin >> n >> m >> q;
-  int l = m, r = m;
-  bool start = false;
-  int len1 = 0, len2 = 0;
-  v(pii) segs;
-  segs.pb({m, m});
-  auto handle = [&] -> void {
-    sortall(segs);
-    v(pii) new_segs;
-    new_segs.pb(segs[0]);
-    for (int i = 1; i < segs.size(); i++) {
-      if (segs[i].F <= new_segs.back().S) {
-        new_segs.back().S = max(new_segs.back().S, segs[i].S);
-      } else {
-        new_segs.pb(segs[i]);
+  int n;
+  cin >> n;
+  if ((n & (n - 1)) == 0) {
+    cout << -1 << endl;
+    return;
+  }
+  vi a(n);
+  set<int> s;
+  fo(i, n) s.insert(i + 1);
+  if (n % 2) {
+    a[n - 1] = n;
+    a[n - 2] = 1;
+    s.erase(a[n - 1]);
+    s.erase(a[n - 2]);
+    re(i, n - 2) {
+      a[i] = 1 ^ (i + 1);
+      s.erase(a[i]);
+    }
+    a[0] = *s.begin();
+  } else {
+    a[n - 1] = 1;
+    re(i, n - 1) {
+      a[i] = 1 ^ (i + 1);
+    }
+    a[0] = n;
+
+    int k = 1;
+    int n1 = n;
+    while ((n1 % 2) == 0) {
+      n1 /= 2;
+      k *= 2;
+    }
+    fo(i, n) {
+      if (a[i] == k) {
+        swap(a[i], a[0]);
+        break;
       }
     }
-    swap(segs, new_segs);
-  };
-
-  auto len = [&]() -> int {
-    int total = 0;
-    for (auto [x, y] : segs) {
-      total += y - x + 1;
-    }
-    return total;
-  };
-
-  fo(i, q) {
-    int x;
-    cin >> x;
-    for (auto& [l, r] : segs){
-      if(x<l)
-    }
-      handle();
-    cout << len() << " ";
   }
-  cout << endl;
+  // YN((a[0] & 1) && a.size() == 0);
+  print_space(a, n);
 }
 
 signed main() {
