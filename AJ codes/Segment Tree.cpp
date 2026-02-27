@@ -124,7 +124,4 @@ struct LazySegmentTree {
       tree[v] = operation(tree[v * 2], tree[v * 2 + 1]);
     }
   }
-  ll tm = (tl + tr) / 2;
-  push(v);
-  return operation(sump(v * 2, tl, tm, l, min(r, tm)), sump(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));  // merge the left and right subtree
 };
