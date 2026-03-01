@@ -68,28 +68,17 @@ void file(string s = "") {
 }
 
 constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int N = 2e4 + 1;
 constexpr int INF = 1e18;
 
-void solve();
-void precompute();
-
+bitset<30> b[N];
 signed main() {
-  fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
-  }
-}
-
-void precompute() {
-}
-
-void solve() {
+  int n, k;
+  cin >> n >> k;
+  fo(i, n) cin >> b[i];
+  int ans = k;
+  fo(i, n) for (int j = i + 1; j < n; j++) {
+    ans = min(ans, (int)(b[i] ^ b[j]).count());
+  };
+  cout << ans << endl;
 }

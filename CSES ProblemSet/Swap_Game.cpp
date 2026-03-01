@@ -76,20 +76,45 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
-  precompute();
+  using A = array<array<int, 3>, 3>;
+  A init{};
+  fo(i, 3) fo(j, 3) cin >> init[i][j];
+  A fin{};
+  fin[0] = {1, 2, 3};
+  fin[1] = {4, 5, 6};
+  fin[2] = {7, 8, 9};
+  vi gx = {0, 0, 0, 0, 1, 1, 1, 2, 2, 2};
+  vi gy = {0, 0, 1, 2, 0, 1, 2, 0, 1, 2};
+  auto fn = [&](A a) {
+    int res = 0;
+    fo(i, 3) fo(j, 3) res = res + abs(gx[a[i][j]] - gx[fin[i][j]]) + abs(gy[a[i][j]] - gy[fin[i][j]]);
+    return res / 2;
+  };
 
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  map<A, int> dis;
+  priority_queue<pair<int, A>, vector<pair<int, A>>, greater<pair<int, A>>> q;
+  q.push({fn(init), init});
+  dis[init] = 0;
+  while (!q.empty()) {
+    auto [_, n] = q.top();
+    int d = dis[n];
+    if (n == fin) {
+      cout << d << endl;
+      return 0;
+    }
+    q.pop();
+    fo(i, 3) fo(j, 2) {
+      auto c1 = n, c2 = n;
+      swap(c1[i][j], c1[i][j + 1]);
+      swap(c2[j][i], c2[j + 1][i]);
+      if (dis.find(c1) == dis.end()) {
+        dis[c1] = d + 1;
+        q.push({fn(c1) + d + 1, c1});
+      }
+      if (dis.find(c2) == dis.end()) {
+        dis[c2] = d + 1;
+        q.push({fn(c2) + d + 1, c2});
+      }
+    }
   }
-}
-
-void precompute() {
-}
-
-void solve() {
-}
+};

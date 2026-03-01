@@ -1,7 +1,7 @@
 from decimal import Decimal, getcontext, ROUND_HALF_EVEN
 
 # Set precision high enough
-getcontext().prec = 10
+getcontext().prec = 200
 
 n, k = map(int, input().split())
 ans = Decimal('0')

@@ -77,10 +77,9 @@ void precompute();
 signed main() {
   fastio;
   file();
-  precompute();
 
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
 
   fo(tt, testCases) {
     Test(tt + 1);
@@ -88,8 +87,45 @@ signed main() {
   }
 }
 
-void precompute() {
-}
-
 void solve() {
+  int n, m;
+  cin >> n >> m;
+  vvi adj(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    adj[u - 1].pb(v - 1);
+    adj[v - 1].pb(u - 1);
+  }
+  vi par(n, -1), init(n), fin(n), vis(n);
+  vi cities;
+  int time = 0;
+  auto dfs = [&](auto&& dfs, int nd) -> void {
+    vis[nd] = 1;
+    init[nd] = fin[nd] = time++;
+    int cnt = 0;
+    int f = fin[nd];
+    for (auto c : adj[nd]) {
+      if (c == par[nd]) continue;
+      if (!vis[c]) {
+        par[c] = nd;
+        dfs(dfs, c);
+        if (fin[c] >= init[nd]) {
+          cnt++;
+        }
+      }
+      f = min(f, fin[c]);
+    }
+    fin[nd] = f;
+    if (nd != 0 && cnt)
+      cities.pb(nd);
+    else if (nd == 0 && cnt > 1)
+      cities.pb(nd);
+  };
+  dfs(dfs, 0);
+  debug(init, fin);
+  sortall(cities);
+  cities.resize(unique(all(cities)) - cities.begin());
+  cout << cities.size() << endl;
+  for (auto x : cities) cout << x + 1 << " ";
 }

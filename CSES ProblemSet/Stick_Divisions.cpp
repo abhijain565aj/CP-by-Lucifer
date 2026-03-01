@@ -75,21 +75,22 @@ void solve();
 void precompute();
 
 signed main() {
-  fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m;
+  cin >> n >> m;
+  vi a(m);
+  read(a, m);
+  int ans = 0;
+  multiset<int> ms(all(a));
+  debug(ms);
+  while (ms.size() > 1) {
+    auto it = ms.begin();
+    auto i1 = *it;
+    ms.erase(it);
+    auto it2 = ms.begin();
+    auto i2 = *it2;
+    ms.erase(it2);
+    ans += i1 + i2;
+    ms.insert(i1 + i2);
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  cout << ans << endl;
 }

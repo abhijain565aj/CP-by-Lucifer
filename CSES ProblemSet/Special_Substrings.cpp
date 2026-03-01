@@ -76,20 +76,27 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
-  precompute();
+  using A = array<int, 26>;
+  string s;
+  cin >> s;
 
-  int testCases = 1;
-  cin >> testCases;
+  bool seen[26]{};
+  for (char c : s) seen[c - 'a'] = true;
 
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  map<A, int> m;
+  A cur{};
+  m[cur] = 1;
+  ll ans = 0;
+  for (char c : s) {
+    if (c == s[0]) {
+      for (int i = 0; i < 26; ++i) {
+        if (seen[i]) cur[i]--;
+      }
+    }
+    cur[c - 'a']++;
+    ans += m[cur];
+    m[cur]++;
   }
-}
 
-void precompute() {
-}
-
-void solve() {
+  cout << ans << '\n';
 }

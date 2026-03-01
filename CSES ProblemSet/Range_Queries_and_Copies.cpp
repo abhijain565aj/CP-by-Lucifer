@@ -60,10 +60,9 @@ typedef long double ld;
 
 void file(string s = "") {
   if (local) {
-    // freopen("error.txt", "w", stderr);
-    // freopen("output.txt", "w", stdout);
-    // freopen(("input" + s + ".txt").c_str(), "r", stdin);
-    return;
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+    freopen(("input" + s + ".txt").c_str(), "r", stdin);
   }
 }
 
@@ -76,7 +75,7 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
+  // file();
   precompute();
 
   int testCases = 1;

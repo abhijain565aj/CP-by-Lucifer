@@ -80,7 +80,7 @@ signed main() {
   precompute();
 
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
 
   fo(tt, testCases) {
     Test(tt + 1);
@@ -92,4 +92,12 @@ void precompute() {
 }
 
 void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  vi dp(n + 1);
+  re(i,n+1){
+    auto
+  }
 }

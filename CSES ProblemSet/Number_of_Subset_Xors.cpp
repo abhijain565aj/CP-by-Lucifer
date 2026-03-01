@@ -75,21 +75,17 @@ void solve();
 void precompute();
 
 signed main() {
-  fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
-  }
-}
-
-void precompute() {
-}
-
-void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  vi basis;
+  auto add = [&](int x) -> void {
+    for (auto y : basis) {
+      x = min(x, x ^ y);
+    }
+    if (x != 0) basis.pb(x);
+  };
+  for (auto& x : a) add(x);
+  cout << (1ll << basis.size()) << endl;
 }

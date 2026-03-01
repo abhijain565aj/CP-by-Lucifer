@@ -16,7 +16,7 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 // #define ONLINE_JUDGE
 #ifndef ONLINE_JUDGE
-#include "./0_debug.cpp"
+#include "./DEBUG.cpp"
 #else
 #define debug(...)
 #define Test(tt)

@@ -80,7 +80,7 @@ signed main() {
   precompute();
 
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
 
   fo(tt, testCases) {
     Test(tt + 1);
@@ -91,5 +91,94 @@ signed main() {
 void precompute() {
 }
 
+template <typename T>
+struct SegmentTree {
+  vector<T> tree;
+  int n;
+  int default_value;
+  function<T(T, T)> merge = [](T l, T r) { return l + r; };
+  SegmentTree(
+      int n,
+      int default_value = 0,
+      function<T(T, T)> merge = [](T l, T r) { return l + r; }) {
+    this->n = n;
+    this->default_value = default_value;
+    this->merge = merge;
+    tree.resize(4 * n);
+  }
+  void build(vector<T>& a) {
+    buildp(a, 1, 0, n - 1);
+  }
+  T query(int l, int r) {
+    return queryp(1, 0, n - 1, l, r);
+  }
+  void update(int pos, T new_val) {
+    updatep(1, 0, n - 1, pos, new_val);
+  }
+
+  void buildp(vector<T>& a, int v, int tl, int tr) {
+    if (tl == tr) {
+      tree[v] = a[tl];
+    } else {
+      int tm = (tl + tr) / 2;
+      buildp(a, v * 2, tl, tm);
+      buildp(a, v * 2 + 1, tm + 1, tr);
+      tree[v] = merge(tree[v * 2], tree[v * 2 + 1]);
+    }
+  }
+  T queryp(int v, int tl, int tr, int l, int r) {
+    if (l > r) {
+      return 0;
+    }
+    if (l == tl && r == tr) {
+      return tree[v];
+    }
+    int tm = (tl + tr) / 2;
+    return merge(queryp(v * 2, tl, tm, l, min(r, tm)), queryp(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
+  }
+  void updatep(int v, int tl, int tr, int pos, T new_val) {
+    if (tl == tr) {
+      tree[v] = new_val;
+    } else {
+      int tm = (tl + tr) / 2;
+      if (pos <= tm) {
+        updatep(v * 2, tl, tm, pos, new_val);
+      } else {
+        updatep(v * 2 + 1, tm + 1, tr, pos, new_val);
+      }
+      tree[v] = merge(tree[v * 2], tree[v * 2 + 1]);
+    }
+  }
+};
+
 void solve() {
+  int n, q;
+  cin >> n >> q;
+  vi a(n);
+  read(a, n);
+  vector<array<int, 3>> qry(q);
+  vi ans(q);
+  fo(i, q) {
+    cin >> qry[i][0] >> qry[i][1];
+    qry[i][0]--, qry[i][1]--;
+    qry[i][2] = i;
+  }
+  sortall(qry);
+
+  map<int, vi> mp;
+  re(i, n) mp[a[i]].pb(i);
+  SegmentTree<int> st(n);
+  for (auto& [_, v] : mp) {
+    st.update(v.back(), 1);
+  }
+  int j = 0;
+  for (auto& [u, v, i] : qry) {
+    for (; j < u; j++) {
+      mp[a[j]].pop_back();
+      if (mp[a[j]].size())
+        st.update(mp[a[j]].back(), 1);
+    }
+    ans[i] = st.query(u, v);
+  }
+  for (auto& x : ans) cout << x << "\n";
 }

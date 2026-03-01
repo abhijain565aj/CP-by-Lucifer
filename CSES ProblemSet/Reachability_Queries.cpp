@@ -58,38 +58,68 @@ typedef long double ld;
 #define print(a, n) \
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
-void file(string s = "") {
-  if (local) {
-    // freopen("error.txt", "w", stderr);
-    // freopen("output.txt", "w", stdout);
-    // freopen(("input" + s + ".txt").c_str(), "r", stdin);
-    return;
-  }
-}
-
 constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int N = 5e4 + 1;
 constexpr int INF = 1e18;
 
 void solve();
 void precompute();
-
+bitset<N> b[N];
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m, q;
+  cin >> n >> m >> q;
+  vvi adj(n), radj(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    adj[u - 1].pb(v - 1);
+    radj[v - 1].pb(u - 1);
   }
-}
+  vi st;
+  vi vis(n);
+  auto dfs1 = [&](auto&& dfs1, int i) -> void {
+    vis[i] = true;
+    for (auto x : adj[i]) {
+      if (!vis[x]) dfs1(dfs1, x);
+    }
+    st.pb(i);
+  };
+  fo(i, n) if (!vis[i]) dfs1(dfs1, i);
+  fo(i, n) vis[i] = -1;
+  int comp = 0;
+  auto dfs2 = [&](auto&& dfs2, int i) -> void {
+    vis[i] = comp;
+    for (auto x : radj[i])
+      if (vis[x] == -1) dfs2(dfs2, x);
+  };
+  reverse(all(st));
+  for (auto x : st)
+    if (vis[x] == -1) dfs2(dfs2, x), comp++;
+  debug(vis);
 
-void precompute() {
-}
-
-void solve() {
+  vvi nadj(comp);
+  vi cvis(comp);
+  fo(i, comp) b[i].set(i);
+  fo(i, n) for (auto x : adj[i]) {
+    nadj[vis[i]].pb(vis[x]);
+  }
+  for (auto& v : nadj) {
+    sortall(v);
+    v.resize(unique(all(v)) - v.begin());
+  }
+  debug(nadj);
+  auto dfs3 = [&](auto&& dfs3, int i) -> void {
+    cvis[i] = true;
+    for (auto x : nadj[i]) {
+      if (!cvis[x]) dfs3(dfs3, x);
+      b[i] |= b[x];
+    }
+  };
+  fo(i, comp) if (!cvis[i]) dfs3(dfs3, i);
+  while (q--) {
+    int u, v;
+    cin >> u >> v;
+    YN(b[vis[u - 1]][vis[v - 1]]);
+  }
 }

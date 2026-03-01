@@ -76,20 +76,35 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m;
+  cin >> n >> m;
+  vvi adj(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u].pb(v);
+    adj[v].pb(u);
   }
-}
 
-void precompute() {
-}
-
-void solve() {
+  vi vis(n, -1);
+  int comp = 0;
+  auto dfs = [&](auto&& dfs, int i) -> void {
+    vis[i] = comp;
+    for (auto x : adj[i])
+      if (vis[x] == -1) {
+        dfs(dfs, x);
+      }
+  };
+  fo(i, n) if (vis[i] == -1) dfs(dfs, i), comp++;
+  vi sz(comp);
+  fo(i, n) sz[vis[i]]++;
+  bitset<N> b;
+  b.set(0);
+  fo(i, comp) {
+    b = b | (b << sz[i]);
+  }
+  string s = "";
+  fo(i, n) s += (b[i + 1]) ? "1" : "0";
+  cout << s << endl;
 }

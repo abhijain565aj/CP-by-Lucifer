@@ -58,38 +58,32 @@ typedef long double ld;
 #define print(a, n) \
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
-void file(string s = "") {
-  if (local) {
-    // freopen("error.txt", "w", stderr);
-    // freopen("output.txt", "w", stdout);
-    // freopen(("input" + s + ".txt").c_str(), "r", stdin);
-    return;
-  }
-}
-
 constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int N = 5e4 + 1;
 constexpr int INF = 1e18;
 
 void solve();
 void precompute();
-
+bitset<N> b[N];
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m;
+  cin >> n >> m;
+  fo(i, n) b[i].set(i);
+  vvi adj(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    adj[u - 1].pb(v - 1);
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  vi vis(n);
+  auto fn = [&](auto&& fn, int i) -> void {
+    vis[i] = true;
+    for (auto x : adj[i]) {
+      if (!vis[x]) fn(fn, x);
+      b[i] |= b[x];
+    }
+  };
+  fo(i, n) if (!vis[i]) fn(fn, i);
+  fo(i, n) cout << b[i].count() << " ";
 }

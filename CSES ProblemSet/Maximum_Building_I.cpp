@@ -77,10 +77,8 @@ void precompute();
 signed main() {
   fastio;
   file();
-  precompute();
-
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
 
   fo(tt, testCases) {
     Test(tt + 1);
@@ -88,8 +86,47 @@ signed main() {
   }
 }
 
-void precompute() {
+int max_area(vi& h) {
+  stack<pii> s;
+  s.push({-1, -1});
+  int n = h.size();
+  vi l(n), r(n);
+  fo(i, n) {
+    while (s.top().F >= h[i]) s.pop();
+    l[i] = s.top().S;
+    s.push({h[i], i});
+  }
+  while (!s.empty()) s.pop();
+  s.push({-1, n});
+  re(i, n) {
+    while (s.top().F >= h[i]) s.pop();
+    r[i] = s.top().S;
+    s.push({h[i], i});
+  }
+  int ans = 0;
+  fo(i, n) ans = max(ans, h[i] * (r[i] - l[i] - 1));
+  return ans;
 }
 
 void solve() {
+  int n, m;
+  cin >> n >> m;
+  vs a(n);
+  read(a, n);
+  vvi up(n, vi(m));
+  int ans = 0;
+  fo(i, n) {
+    fo(j, m) {
+      if (a[i][j] == '*')
+        up[i][j] = i;
+      else if (i > 0)
+        up[i][j] = up[i - 1][j];
+      else
+        up[i][j] = -1;
+    }
+    vi heights(m);
+    fo(j, m) heights[j] = i - up[i][j];
+    ans = max(ans, max_area(heights));
+  }
+  cout << ans << endl;
 }

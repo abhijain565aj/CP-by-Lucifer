@@ -74,22 +74,69 @@ constexpr int INF = 1e18;
 void solve();
 void precompute();
 
+ll mod(ll a, ll m = MOD) { return (a % m + m) % m; }
+ll add(ll a, ll b, ll m = MOD) { return mod(a + b, m); }
+ll sub(ll a, ll b, ll m = MOD) { return mod(a - b, m); }
+ll mul(ll a, ll b, ll m = MOD) { return mod(a * b, m); }
+ll power(ll a, ll b, ll m = MOD) {
+  ll res = 1;
+  while (b) {
+    if (b & 1)
+      res = mul(res, a, m);
+    a = mul(a, a, m);
+    b >>= 1;
+  }
+  return res;
+}
+ll inv(ll a, ll m = MOD) { return power(a, m - 2, m); }
+ll divide(ll a, ll b, ll m = MOD) { return mul(a, inv(b, m), m); }
+
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m;
+  cin >> n >> m;
+  vvi a(n, vi(m + 1));
+  fo(i, n) {
+    fo(j, m + 1) cin >> a[i][j];
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  fo(i, n) {
+    if (i >= m) break;
+    if (a[i][i] == 0) {
+      for (int j = i; j < n; j++) {
+        if (a[j][i]) {
+          swap(a[i], a[j]);
+          break;
+        }
+      }
+    }
+    if (a[i][i] == 0) continue;
+    re(j, m + 1) a[i][j] = divide(a[i][j], a[i][i]);
+    for (int j = i + 1; j < n; j++) {
+      for (int k = m; k >= i; k--) {
+        a[j][k] = sub(a[j][k], mul(a[i][k], a[j][i]));
+      }
+    }
+  }
+  vi ans(m), set(m);
+  re(i, n) {
+    bool anyone = false;
+    re(j, m) {
+      if (set[j]) {
+        a[i][m] = sub(a[i][m], mul(a[i][j], ans[j]));
+      }
+      if (!anyone && !set[j] && a[i][j]) {
+        anyone = true;
+        set[j] = true;
+        ans[j] = divide(a[i][m], a[i][j]);
+      } else if (anyone && !set[j] && a[i][j]) {
+        set[j] = true;
+        ans[j] = 0;
+      }
+    }
+    if (!anyone && a[i][m]) {
+      cout << -1 << endl;
+      return 0;
+    }
+  }
+  for (auto x : ans) cout << x << " ";
 }

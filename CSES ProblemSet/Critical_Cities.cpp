@@ -72,15 +72,13 @@ constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
 void solve();
-void precompute();
 
 signed main() {
   fastio;
   file();
-  precompute();
 
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
 
   fo(tt, testCases) {
     Test(tt + 1);
@@ -88,8 +86,54 @@ signed main() {
   }
 }
 
-void precompute() {
-}
-
 void solve() {
+  int n, m;
+  cin >> n >> m;
+  vvi adj(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    adj[u - 1].pb(v - 1);
+  }
+  debug(adj[2], adj[3], adj[4], adj[5]);
+  vi par(n, -1), init(n), fin(n), vis(n);
+  set<int> cities;
+  int time = 0;
+  set<int> stack;
+  auto dfs = [&](auto&& dfs, int nd) -> void {
+    vis[nd] = 1;
+    stack.insert(nd);
+    init[nd] = fin[nd] = time++;
+    int cnt = 0;
+    int f = fin[nd];
+    for (auto c : adj[nd]) {
+      if (c == par[nd]) continue;
+      if (!vis[c]) {
+        par[c] = nd;
+        dfs(dfs, c);
+        if (fin[c] >= init[nd]) {
+          cnt++;
+        }
+      }
+      if (!stack.count(c)) f = min(f, fin[c]);
+    }
+    fin[nd] = f;
+    if (nd != 0 && cnt)
+      cities.insert(nd);
+    else if (nd == 0 && cnt > 1)
+      cities.insert(nd);
+    stack.erase(nd);
+  };
+  dfs(dfs, 0);
+  debug(init, fin);
+  debug(cities);
+  int curr = n - 1;
+  set<int> path = {0, n - 1};
+  if (cities.count(curr)) path.insert(curr);
+  while (par[curr] != -1) {
+    curr = par[curr];
+    if (cities.count(curr)) path.insert(curr);
+  }
+  cout << path.size() << endl;
+  for (auto x : path) cout << x + 1 << " ";
 }

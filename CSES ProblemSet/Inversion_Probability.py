@@ -1,7 +1,7 @@
 from decimal import Decimal, getcontext, ROUND_HALF_EVEN
 
 # Set precision high enough
-getcontext().prec = 30
+getcontext().prec = 100
 
 n = int(input())
 a = list(map(Decimal, input().split()))

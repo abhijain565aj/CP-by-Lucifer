@@ -1,52 +1,44 @@
 // Solution by Abhi Jain aka Lucifer aka abhijain565aj
 #pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
+
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
 using namespace std::chrono;
 using namespace __gnu_pbds;
-
-template<class T>
-using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>; 
-template<class T>
-using ordered_multiset =  tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update>;
+template <typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+template <typename T>
+using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 // find_by_order, order_of_key
 
 // #define ONLINE_JUDGE
 #ifndef ONLINE_JUDGE
-#include "./0_debug.cpp"
+#include "./DEBUG.cpp"
+#define local true
 #else
-#define debug(x)
-#define debug2(x, y)
-#define debug3(x, y, z)
-#define test(tt)
+#define debug(...)
+#define Test(tt)
 #define Error_file(x)
+#define local false
 #endif
 
+#define int long long
 typedef long long ll;
-typedef unsigned long long ull;
-typedef long double lld;
-
-#define MOD 1000000007
-#define INF 1e18
+typedef long double ld;
 
 #define vi vector<int>
 #define vb vector<bool>
 #define vs vector<string>
-#define vl vector<ll>
 #define vvi vector<vi>
-#define vvl vector<vl>
 #define pii pair<int, int>
-#define pli pair<ll, int>
-#define pll pair<ll, ll>
 #define v(x) vector<x>
 
-#define fo(i, n) for (decltype(n) i = 0; i < n; i++)
-#define re(i, n) for (decltype(n) i = n - 1; i >= 0; i--)
-#define fo1(i, a, b) for (decltype(b) i = a; i < b; i++)
-#define re1(i, a, b) for (decltype(a) i = a; i >= b; i--)
+#define fo(i, n) for (int i = 0; i < n; i++)
+#define re(i, n) for (int i = n - 1; i >= 0; i--)
+#define loop(i, a, b) for (int i = a; (a >= b) ? i >= b : i <= b; (a >= b) ? i-- : i++)
 
 #define YN(possible) cout << ((possible) ? "YES" : "NO") << endl;
 #define all(x) (x).begin(), (x).end()
@@ -54,41 +46,65 @@ typedef long double lld;
 #define F first
 #define S second
 #define pb push_back
-// a.resize(unique(all(a)) - a.begin());  -> unque element me convert karta hai
+// a.resize(unique(all(a)) - a.begin());
 
-#define fastio ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
-#define read(a, n) for (int i = 0; i < n; ++i) cin >> a[i];
-#define print_space(a, n) for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
+#define fastio             \
+  ios::sync_with_stdio(0); \
+  cin.tie(0);              \
+  cout.tie(0);
 
+#define read(a, n) \
+  for (int i = 0; i < n; ++i) cin >> a[i];
+#define print(a, n) \
+  for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
-int main()
-{
-    fastio; Error_file("0_Error.txt");
-    int n,m,k;
-    cin>>n>>m>>k;
-    vi anime(k);
-    read(anime,k);
-    vvi adj(n);
-    fo(i,m){
-        int u,v;
-        cin>>u>>v;
-        u--,v--;
-        adj[u].pb(v);
-        adj[v].pb(u);
-    }
-    vi distance(n,-1);
-    vi visited(n);
-    queue<pii> q;
-    for(auto x:anime) q.push({x-1,0});
-    while(!q.empty()){
-        auto [node,dist] = q.front();
-        q.pop();
-        for(auto x:adj[node]){
-            if(visited[x]) continue;
-            distance[x] = dist+1;
-            q.push({x,dist+1});
-            visited[x] = true;
-        }
-    }
-    print_space(distance,n);
+void file(string s = "") {
+  if (local) {
+    // freopen("error.txt", "w", stderr);
+    // freopen("output.txt", "w", stdout);
+    // freopen(("input" + s + ".txt").c_str(), "r", stdin);
+    return;
+  }
+}
+
+constexpr int MOD = 1000000007;
+constexpr int N = 1e5 + 1;
+constexpr int INF = 1e18;
+
+void solve();
+void precompute();
+
+signed main() {
+  fastio;
+  file();
+  precompute();
+
+  int testCases = 1;
+  cin >> testCases;
+
+  fo(tt, testCases) {
+    Test(tt + 1);
+    solve();
+  }
+}
+
+void solve() {
+  int n, k, m;
+  cin >> n >> k >> m;
+  vi b(k);
+  read(b, k);
+  vvi adj(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u].pb(v);
+    adj[v].pb(u);
+  }
+  vi dis(n,INF), par(n,-1);
+  queue<int> q;
+  fo(i, k) q.push(b[i]);
+  while(!q.empty()){
+    
+  }
 }

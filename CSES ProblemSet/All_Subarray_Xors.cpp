@@ -75,21 +75,20 @@ void solve();
 void precompute();
 
 signed main() {
-  fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  set<int> pre;
+  set<int> xors;
+  pre.insert(0);
+  int last = 0;
+  fo(i, n) {
+    int npref = last ^ a[i];
+    for (auto x : pre) xors.insert(x ^ npref);
+    pre.insert(npref);
+    last = npref;
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  cout << xors.size() << endl;
+  for (auto x : xors) cout << x << " ";
 }
