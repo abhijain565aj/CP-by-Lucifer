@@ -80,7 +80,7 @@ signed main() {
   precompute();
 
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
 
   fo(tt, testCases) {
     Test(tt + 1);
@@ -91,5 +91,55 @@ signed main() {
 void precompute() {
 }
 
+void solve1() {
+  int n, k;
+  cin >> n >> k;
+  vi a(n);
+  read(a, n);
+  vvi dp(n + 1, vi(k + 1, 0));  // dp[i][j] = result for [i,...,n-1] with j subarrays
+  for (int i = n - 1; i >= 0; i--) {
+    dp[i][0] = INF;
+    for (int j = 1; j <= k; j++) {
+      dp[i][j] = INF;
+      int sum = 0;
+      for (int k = i; k < n; k++) {
+        sum += a[k];
+        dp[i][j] = min(dp[k + 1][j - 1] + sum * sum, dp[i][j]);
+      }
+    }
+  }
+  // debug(dp);
+  cout << dp[0][k] << endl;
+}
+
 void solve() {
+  int n, k;
+  cin >> n >> k;
+  vi a(n);
+  read(a, n);
+  vi pre(n);
+  fo(i, n) pre[i] = a[i] + ((i > 0) ? pre[i - 1] : 0);
+  debug(pre);
+
+  vvi dp(n + 1, vi(k + 2, -1));
+  auto opt = dp;
+  fo(i, n + 1) fo(j, k + 2) opt[i][j] = i;
+  fo(i, k + 2) dp[n][i] = 0;
+  debug(dp, opt);
+  // dp[i][j] = result for [i,...,n-1] with j subarrays
+  for (int i = n - 1; i >= 0; i--) {
+    for (int j = k; j >= 1; j--) {
+      for (int t = opt[i][j + 1]; t <= min(opt[i + 1][j], n - 1); t++) {
+        int sum = pre[t] - ((i > 0) ? pre[i - 1] : 0);
+        if (dp[i][j] == -1 || dp[i][j] >= dp[t + 1][j - 1] + sum * sum) {
+          if (dp[t + 1][j - 1] != -1) {
+            dp[i][j] = dp[t + 1][j - 1] + sum * sum;
+            opt[i][j] = t;
+          }
+        }
+      }
+    }
+  }
+  debug(dp);
+  cout << dp[0][k] << endl;
 }

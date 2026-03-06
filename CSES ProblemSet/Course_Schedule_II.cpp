@@ -42,6 +42,7 @@ typedef long double ld;
 
 #define YN(possible) cout << ((possible) ? "YES" : "NO") << endl;
 #define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
 #define sortall(x) sort(all(x))
 #define F first
 #define S second
@@ -60,9 +61,9 @@ typedef long double ld;
 
 void file(string s = "") {
   if (local) {
-    // freopen("error.txt", "w", stderr);
-    // freopen("output.txt", "w", stdout);
-    // freopen(("input" + s + ".txt").c_str(), "r", stdin);
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+    freopen(("input" + s + ".txt").c_str(), "r", stdin);
     return;
   }
 }
@@ -77,19 +78,33 @@ void precompute();
 signed main() {
   fastio;
   file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m;
+  cin >> n >> m;
+  vvi adj(n), radj(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u].pb(v);
+    radj[v].pb(u);
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  for (auto& x : adj) {
+    sort(rall(x));
+  }
+  vi vis(n);
+  vi st;
+  auto bfs = [&](auto&& dfs, int u) -> void {
+    priority_queue<pii,smaller
+    if (vis[u]) return;
+    vis[u] = 1;
+    for (auto x : radj[u]) {
+      if (!vis[x]) {
+        dfs(dfs, x);
+      }
+    }
+    st.pb(u);
+  };
+  fo(i, n) dfs(dfs, i);
+  // reverse(all(st));
+  for (auto x : st) cout << x + 1 << " ";
 }

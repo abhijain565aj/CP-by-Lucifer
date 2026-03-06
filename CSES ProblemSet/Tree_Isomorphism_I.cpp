@@ -77,7 +77,6 @@ void precompute();
 signed main() {
   fastio;
   file();
-  precompute();
 
   int testCases = 1;
   cin >> testCases;
@@ -87,9 +86,50 @@ signed main() {
     solve();
   }
 }
-
-void precompute() {
+// Modular Arithmetic
+ll mod(ll a, ll m = MOD) { return (a % m + m) % m; }
+ll add(ll a, ll b, ll m = MOD) { return mod(a + b, m); }
+ll sub(ll a, ll b, ll m = MOD) { return mod(a - b, m); }
+ll mul(ll a, ll b, ll m = MOD) { return mod(a * b, m); }
+ll power(ll a, ll b, ll m = MOD) {
+  ll res = 1;
+  while (b) {
+    if (b & 1)
+      res = mul(res, a, m);
+    a = mul(a, a, m);
+    b >>= 1;
+  }
+  return res;
 }
+ll inv(ll a, ll m = MOD) { return power(a, m - 2, m); }
+ll divide(ll a, ll b, ll m = MOD) { return mul(a, inv(b, m), m); }
 
 void solve() {
+  int n;
+  cin >> n;
+  vvi adj1(n), adj2(n);
+  fo(i, n - 1) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj1[u].pb(v);
+    adj1[v].pb(u);
+  }
+  fo(i, n - 1) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj2[u].pb(v);
+    adj2[v].pb(u);
+  }
+  auto dfs = [&](auto&& dfs, vvi& adj, int nd, int p) -> int {
+    int hash = 1;
+    for (auto x : adj[nd]) {
+      if (x == p) continue;
+      hash = mul(hash, power(3, dfs(dfs, adj, x, nd)));
+    }
+    return power(2, hash);
+  };
+  bool y = dfs(dfs, adj1, 0, -1) == dfs(dfs, adj2, 0, -1);
+  YN(y);
 }

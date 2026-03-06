@@ -4,10 +4,13 @@
 
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
+#include <ext/rope>
 
 using namespace std;
 using namespace std::chrono;
 using namespace __gnu_pbds;
+using namespace __gnu_cxx;
+
 template <typename T>
 using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 template <typename T>
@@ -91,79 +94,101 @@ signed main() {
 void precompute() {
 }
 
-struct Trienode {
-  int val;
-  int level;
-  int counts;
-  Trienode* child[2];
-  Trienode(int val, int level) : val(val), level(level) {
-    child[0] = child[1] = nullptr;
-    counts = 0;
-  }
-};
-
-struct Trie {
-  Trienode* root;
-  Trie() {
-    root = new Trienode(0, 32);
-  }
-  void insert(int num) {
-    root->counts++;
-    Trienode* node = root;
-    loop(i, 31, 0) {
-      int bit = (num >> i) & 1;
-      if (!node->child[bit]) {
-        node->child[bit] = new Trienode(bit, i);
-      }
-      node = node->child[bit];
-      node->counts++;
+struct Treap {
+ public:
+  struct Node {
+    Node *left, *right;
+    char key;
+    int prior;
+    int size;
+    Node() : left(nullptr), right(nullptr), prior(rand()), size(0) {};
+    Node(char key) : left(nullptr), right(nullptr), key(key), prior(rand()), size(1) {}
+  };
+  Node* root;
+  Treap() : root(nullptr) {}
+  void insert(char key) {
+    if (root == nullptr) {
+      root = new Node(key);
+      return;
+    } else {
+      Node* n = new Node(key);
+      merge(root, root, n);
     }
   }
+  pair<Node*, Node*> split(Node* nd, int size) {
+    Node *l, *r;
+    split(nd, size, l, r);
+    return {l, r};
+  }
+  void merge(Node* l, Node* r) {
+    merge(root, l, r);
+  }
+  Node* getRoot() {
+    return root;
+  }
+  string to_string(Node* t) {
+    if (!t) return "";
+    return to_string(t->left) + t->key + to_string(t->right);
+  }
 
-  int max_xor(int num, int avoid) {
-    debug(num, avoid);
-    int ans = 0;
-    Trienode* node = root;
-    // vi bits;
-    bool matching = avoid != -1;
-    if (root->counts == 1 && avoid != -1) return 0;
-    loop(i, 31, 0) {
-      int bit = (num >> i) & 1;
-      int avoid_bit = (avoid >> i) & 1;
-      // if (!node) return 0;
-      auto parent = node;
-      if (node->child[!bit]) {
-        if (avoid_bit != 1 - bit) matching = false;
-        node = parent->child[!bit];
-        if (matching && node->counts == 1) {
-          matching = false;
-          node = parent->child[bit];
-        } else {
-          ans |= (1 << i);
-        }
-      } else {
-        if (avoid_bit != bit) matching = false;
-        node = node->child[bit];
-      }
+ private:
+  int getSize(Node* t) {
+    return t ? t->size : 0;
+  }
+  void split(Node* t, int size, Node*& l, Node*& r) {
+    if (size == 0) {
+      l = nullptr;
+      r = t;
+      return;
     }
-    // debug(bits);
-    return ans;
+    if (getSize(t->left) < size) {
+      split(t->right, size - getSize(t->left) - 1, l, r);
+      t->right = l;
+      l = t;
+    } else if (getSize(t->left) > size) {
+      split(t->left, size, l, r);
+      t->left = r;
+      r = t;
+    } else {
+      l = t->left;
+      t->left = nullptr;
+      r = t;
+    }
+    t->size = 1 + getSize(t->left) + getSize(t->right);
+  }
+  void merge(Node*& t, Node* l, Node* r) {
+    if (!l || !r) {
+      t = l ? l : r;
+      return;
+    }
+    if (l->prior > r->prior) {
+      l->size += r->size;
+      merge(l->right, l->right, r);
+      t = l;
+    } else {
+      r->size += l->size;
+      merge(r->left, l, r->left);
+      t = r;
+    }
+    t->size = 1 + getSize(t->left) + getSize(t->right);
   }
 };
 
 void solve() {
-  int n;
-  cin >> n;
-  vi a(n);
-  read(a, n);
-  Trie trie;
-  trie.insert(0);
-  int ans = 0;
-  int running_prefix = 0;
-  fo(i, n) {
-    running_prefix ^= a[i];
-    ans = max(ans, trie.max_xor(running_prefix, -1));
-    trie.insert(running_prefix);
+  int n, m;
+  cin >> n >> m;
+  string s;
+  cin >> s;
+  Treap treap;
+  for (char c : s) treap.insert(c);
+  while (m--) {
+    int l, r;
+    cin >> l >> r;
+    l--, r--;
+    auto [a, b] = treap.split(treap.getRoot(), l);
+    auto [c, d] = treap.split(b, r - l + 1);
+    treap.merge(a, d);
+    treap.merge(treap.getRoot(), c);
   }
-  cout << ans << endl;
+  cout << treap.to_string(treap.getRoot()) << endl;
 }

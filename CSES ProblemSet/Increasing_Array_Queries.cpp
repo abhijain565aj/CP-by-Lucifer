@@ -58,23 +58,30 @@ typedef long double ld;
 #define print(a, n) \
   for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
 
+void file(string s = "") {
+  if (local) {
+    freopen("error.txt", "w", stderr);
+    freopen("output.txt", "w", stdout);
+    freopen(("input" + s + ".txt").c_str(), "r", stdin);
+  }
+}
+
 constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
-
-void solve();
-void precompute();
 
 template <typename T>
 struct SegmentTree {
   vector<T> tree;
   int n;
-  int default_value;
+  int default_value = 0;
+  vi nxt;
+  function<T(T, T)> merge = [](T l, T r) { return l + r; };
   SegmentTree(
       int n,
-      int default_value = 0) {
+      vi& nxt) {
     this->n = n;
-    this->default_value = default_value;
+    swap(this->nxt, nxt);
     tree.resize(4 * n);
   }
 
@@ -83,25 +90,20 @@ struct SegmentTree {
   }
 
   int query(int l, int r) {
-    int ans = 0, mx = 0;
-    vector<array<int, 3>> st;
-    st.pb({1, 0, n - 1});
-    while (!st.empty()) {
-      auto [v, tl, tr] = st.back();
-      st.pop_back();
-
-      if (l > tr || r < tl) continue;
-      if (l <= tl && tr <= r) {
-        auto& nd = tree[v];
-        ans += nd.getAns();
-        ans += nd.fn(mx);
-        mx = max(mx, nd.getMax());
-        continue;
+    vi ind;
+    queryp(1, 0, n - 1, l, r, ind);
+    int ans = tree[ind[0]].getAns();
+    auto [mx, mxi] = tree[ind[0]].getMax();
+    for (int i = 1; i < (int)ind.size(); i++) {
+      auto& nd = tree[ind[i]];
+      ans += nd.getAns();
+      ans += nd.fn(mx, nxt[mxi]);
+      auto v = nd.getMax();
+      // mx = max(nd.getMax(), mx);
+      if (v.F >= mx) {
+        mx = v.F;
+        mxi = v.S;
       }
-
-      int tm = (tl + tr) >> 1;
-      st.pb({v * 2 + 1, tm + 1, tr});
-      st.pb({v * 2, tl, tm});
     }
     return ans;
   }
@@ -113,31 +115,40 @@ struct SegmentTree {
       int tm = (tl + tr) / 2;
       buildp(a, v * 2, tl, tm);
       buildp(a, v * 2 + 1, tm + 1, tr);
-      tree[v] = tree[v * 2] + tree[v * 2 + 1];
+      tree[v] = merge(tree[v * 2], tree[v * 2 + 1]);
     }
   }
+  void queryp(int v, int tl, int tr, int l, int r, vi& ind) {
+    if (l > r) {
+      return;
+    }
+    if (l == tl && r == tr) {
+      ind.pb(v);
+      return;
+    }
+    int tm = (tl + tr) / 2;
+    queryp(v * 2, tl, tm, l, min(r, tm), ind);
+    queryp(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r, ind);
+    return;
+  }
 };
-
 struct Node {
   vector<int> mx;
   vector<int> mxp;
+  int mxi;
+  int l, r;
   int ans;
   Node() {}
-  Node(int j) {
+  Node(int j, int i) : mxi(i), l(i), r(i), ans(0) {
     mx = mxp = {j};
-    ans = 0;
   }
-  Node(vector<int>& nmx, vector<int>& nmxp, int nans) {
+  Node(vector<int>& nmx, vector<int>& nmxp, int nmxi, int nans, int l, int r) : mxi(nmxi), l(l), r(r), ans(nans) {
     swap(nmx, mx);
     swap(nmxp, mxp);
-    ans = nans;
   }
   Node operator+(const Node& o) {
-    vi nmx, nmxp;
-    nmx.reserve(mx.size() + o.mx.size());
-    nmxp.reserve(mx.size() + o.mx.size());
-    for (auto x : mx) nmx.pb(x);
-    for (auto x : mxp) nmxp.pb(x);
+    vi nmx = mx;
+    vi nmxp = mxp;
     int nans = ans + o.ans;
     for (auto x : o.mx) {
       nmx.pb(std::max(nmx.back(), x));
@@ -145,38 +156,48 @@ struct Node {
       nmxp.pb(nmxp.back() + nmx.back());
     }
     // debug(mx, o.mx, nmx, nans);
-    return Node(nmx, nmxp, nans);
+    int nmxi = mxi;
+    if (nmx.back() == o.mx.back()) nmxi = o.mxi;
+    return Node(nmx, nmxp, nmxi, nans, l, o.r);
   }
-  inline int getAns() const {
+  inline int getAns() {
     return ans;
   }
-  inline int getMax() const {
-    return mx.back();
+  inline pii getMax() {
+    return {mx.back(), mxi};
   }
-  inline int fn(int m) const {
-    int i = lower_bound(all(mx), m) - mx.begin();
+  int fn(int m, int ind) {
+    int i = min(ind - l, (int)mx.size());
+    // int i = lower_bound(all(mx), m) - mx.begin();
     if (i == 0)
       return 0;
     return m * i - mxp[i - 1];
   }
 };
-
 signed main() {
   fastio;
   int n, q;
   cin >> n >> q;
+  vi arr(n);
   vector<Node> a(n);
   fo(i, n) {
-    int x;
-    cin >> x;
-    a[i] = Node(x);
+    cin >> arr[i];
+    a[i] = Node(arr[i], i);
   }
-  SegmentTree<Node> st(n);
-  st.build(a);
+  vi nxt(n);
+  stack<pii> st;
+  st.push({INF, n});
+  re(i, n) {
+    while (st.top().F <= arr[i]) st.pop();
+    nxt[i] = st.top().S;
+    st.push({arr[i], i});
+  }
+  SegmentTree<Node> segmentTree(n, nxt);
+  segmentTree.build(a);
   while (q--) {
     int a, b;
     cin >> a >> b;
     a--, b--;
-    cout << st.query(a, b) << endl;
+    cout << segmentTree.query(a, b) << endl;
   }
 }

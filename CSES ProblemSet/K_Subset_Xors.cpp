@@ -76,10 +76,27 @@ void precompute();
 
 signed main() {
   fastio;
+  file();
+  precompute();
+
+  int testCases = 1;
+  // cin >> testCases;
+
+  fo(tt, testCases) {
+    Test(tt + 1);
+    solve();
+  }
+}
+
+void precompute() {
+}
+
+void solve() {
   int n, k;
   cin >> n >> k;
   vi a(n);
   read(a, n);
+
   vi basis;
   auto add = [&](int x) -> void {
     for (auto y : basis) {
@@ -87,6 +104,28 @@ signed main() {
     }
     if (x != 0) basis.pb(x);
   };
-  for (auto& x : a) add(x);
-  for(int i=)
+
+  for (auto x : a) add(x);
+  int sz = basis.size();
+  n = n - sz;
+  if (n > 32) {
+    fo(i, k) cout << 0 << " ";
+    return;
+  }
+
+  n = 1 << n;
+  int ct = (k + n - 1) / n;
+
+  sortall(basis);
+  vi u;
+  u.pb(0);
+  for (auto x : basis) {
+    if ((int)u.size() >= ct) break;
+    int sz = u.size();
+    fo(i, sz) u.pb(u[i] ^ x);
+  }
+  sortall(u);
+  fo(i, k) {
+    cout << u[i / n] << " ";
+  }
 }

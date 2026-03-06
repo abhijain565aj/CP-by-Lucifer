@@ -80,7 +80,7 @@ signed main() {
   precompute();
 
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
 
   fo(tt, testCases) {
     Test(tt + 1);
@@ -92,4 +92,63 @@ void precompute() {
 }
 
 void solve() {
+  int n, m;
+  cin >> n >> m;
+  vvi adj(n, vi(n));
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u][v] = adj[v][u] = 1;
+  }
+  vi ind(1 << n);
+  for (int i = 0; i < 1 << n; i++) {
+    vi st;
+    for (int j = 0; j < n; j++)
+      if (i & (1 << j)) st.pb(j);
+    ind[i] = 1;
+    for (auto x : st)
+      if (ind[i]) {
+        for (auto y : st)
+          if (adj[x][y]) {
+            ind[i] = 0;
+            break;
+          }
+      }
+  }
+  vi dp(1 << n, -1), best(1 << n, -1);
+  dp[0] = 0;
+  auto fn = [&](auto&& fn, int i) -> int {
+    if (dp[i] != -1) return dp[i];
+    dp[i] = INF;
+    for (int j = i; j > 0; j = i & (j - 1)) {
+      if (ind[j]) {
+        auto v = fn(fn, i ^ j);
+        if (dp[i] > 1 + v) {
+          dp[i] = 1 + v;
+          best[i] = j;
+        }
+      }
+    }
+    return dp[i];
+  };
+  fn(fn, (1 << n) - 1);
+  debug(dp, best);
+  vi order;
+  int curr = (1 << n) - 1;
+  while (curr != 0) {
+    order.pb(best[curr]);
+    curr = curr ^ best[curr];
+  }
+  cout << dp.back() << endl;
+  vi col(n);
+
+  curr = 1;
+  for (auto x : order) {
+    for (int i = 0; i < n; i++) {
+      if (x & (1 << i)) col[i] = curr;
+    }
+    curr++;
+  }
+  print(col, n);
 }

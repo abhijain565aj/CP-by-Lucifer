@@ -1,52 +1,44 @@
 // Solution by Abhi Jain aka Lucifer aka abhijain565aj
 #pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
+
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
 using namespace std::chrono;
 using namespace __gnu_pbds;
-
-template<class T>
-using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>; 
-template<class T>
-using ordered_multiset =  tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update>;
+template <typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+template <typename T>
+using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 // find_by_order, order_of_key
 
 // #define ONLINE_JUDGE
 #ifndef ONLINE_JUDGE
-#include "./0_debug.cpp"
+#include "./DEBUG.cpp"
+#define local true
 #else
-#define debug(x)
-#define debug2(x, y)
-#define debug3(x, y, z)
-#define test(tt)
+#define debug(...)
+#define Test(tt)
 #define Error_file(x)
+#define local false
 #endif
 
+#define int long long
 typedef long long ll;
-typedef unsigned long long ull;
-typedef long double lld;
-
-#define MOD 1000000007
-#define INF 1e18
+typedef long double ld;
 
 #define vi vector<int>
 #define vb vector<bool>
 #define vs vector<string>
-#define vl vector<ll>
 #define vvi vector<vi>
-#define vvl vector<vl>
 #define pii pair<int, int>
-#define pli pair<ll, int>
-#define pll pair<ll, ll>
 #define v(x) vector<x>
 
-#define fo(i, n) for (decltype(n) i = 0; i < n; i++)
-#define re(i, n) for (decltype(n) i = n - 1; i >= 0; i--)
-#define fo1(i, a, b) for (decltype(b) i = a; i < b; i++)
-#define re1(i, a, b) for (decltype(a) i = a; i >= b; i--)
+#define fo(i, n) for (int i = 0; i < n; i++)
+#define re(i, n) for (int i = n - 1; i >= 0; i--)
+#define loop(i, a, b) for (int i = a; (a >= b) ? i >= b : i <= b; (a >= b) ? i-- : i++)
 
 #define YN(possible) cout << ((possible) ? "YES" : "NO") << endl;
 #define all(x) (x).begin(), (x).end()
@@ -54,48 +46,69 @@ typedef long double lld;
 #define F first
 #define S second
 #define pb push_back
-// a.resize(unique(all(a)) - a.begin());  -> unque element me convert karta hai
+// a.resize(unique(all(a)) - a.begin());
 
-#define fastio ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
-#define read(a, n) for (int i = 0; i < n; ++i) cin >> a[i];
-#define print_space(a, n) for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
-#define int ll
-signed main()
-{
-    fastio; 
-    // Error_file("0_Error.txt");
-    ll n;
-    cin>>n;
-    vl t(n);
-    vi ct(n);
-    fo(i,n) cin>>t[i],t[i]--,ct[t[i]]++;
-    debug(ct);
-    vi visited(n);
-    vi cycle(n);
-    vi stack;
-    auto dfs = [&](auto&&dfs, int node){
-        debug(node);
-        if(visited[node]>ct[node]){
-            if(cycle[node]) return;
-            int i,j;
-            for(i=stack.size()-1;stack[i]!=node;i--);
-            for(j=stack.size()-1;j>=i;j--) cycle[stack[j]] = stack.size()-i;
-            return;     
-        }
-        if(cycle[node]) return;
-        visited[node]++;
-        stack.pb(node);
-        dfs(dfs,t[node]);
-    };
-    fo(i,n) if(ct[i]==0) dfs(dfs,i);
-    fo(i,n) if(visited[i]==0) dfs(dfs,i);
-    debug2(visited,cycle);
-    vi d(n,-1);
-    auto dfs1 = [&](auto&& dfs1, int node)->int{
-        if(d[node]!=-1) return d[node];
-        if(cycle[node]) return d[node] = cycle[node];
-        else return d[node] = 1+dfs1(dfs1,t[node]);
-    };
-    fo(i,n) cout<<dfs1(dfs1,i)<<" ";
-    
+#define fastio             \
+  ios::sync_with_stdio(0); \
+  cin.tie(0);              \
+  cout.tie(0);
+
+#define read(a, n) \
+  for (int i = 0; i < n; ++i) cin >> a[i];
+#define print(a, n) \
+  for (int i = 0; i < n; ++i) cout << a[i] << (i == n - 1 ? '\n' : ' ');
+
+void file(string s = "") {
+  if (local) {
+    // freopen("error.txt", "w", stderr);
+    // freopen("output.txt", "w", stdout);
+    // freopen(("input" + s + ".txt").c_str(), "r", stdin);
+    return;
+  }
+}
+
+constexpr int MOD = 1000000007;
+constexpr int N = 1e5 + 1;
+constexpr int INF = 1e18;
+
+void solve();
+void precompute();
+
+signed main() {
+  fastio;
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  for (auto& x : a) x--;
+  vi vis(n);
+  vi st;
+  vi dis(n, -1);
+  auto dfs = [&](auto&& dfs, int nd) -> void {
+    debug(nd);
+    if (vis[nd] == 1) {
+      vi cycle = {nd};
+      while (st.back() != nd) {
+        cycle.pb(st.back());
+        st.pop_back();
+      }
+      for (auto x : cycle) dis[x] = cycle.size(), vis[x] = 2;
+      return;
+    } else if (vis[nd] == 2) {
+      return;
+    }
+    vis[nd] = 1;
+    st.pb(nd);
+    dfs(dfs, a[nd]);
+    if (dis[nd] == -1) {
+      dis[nd] = 1 + dis[a[nd]];
+      st.pop_back();
+      vis[nd] = 2;
+    }
+  };
+  fo(i, n) if (!vis[i]) {
+    debug(i);
+    dfs(dfs, i);
+  }
+  print(dis, n);
 }

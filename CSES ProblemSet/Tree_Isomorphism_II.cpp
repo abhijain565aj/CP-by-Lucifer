@@ -77,7 +77,6 @@ void precompute();
 signed main() {
   fastio;
   file();
-  precompute();
 
   int testCases = 1;
   cin >> testCases;
@@ -87,9 +86,85 @@ signed main() {
     solve();
   }
 }
-
-void precompute() {
+ll mod(ll a, ll m = MOD) { return (a % m + m) % m; }
+ll add(ll a, ll b, ll m = MOD) { return mod(a + b, m); }
+ll sub(ll a, ll b, ll m = MOD) { return mod(a - b, m); }
+ll mul(ll a, ll b, ll m = MOD) { return mod(a * b, m); }
+ll power(ll a, ll b, ll m = MOD) {
+  ll res = 1;
+  while (b) {
+    if (b & 1)
+      res = mul(res, a, m);
+    a = mul(a, a, m);
+    b >>= 1;
+  }
+  return res;
 }
+ll inv(ll a, ll m = MOD) { return power(a, m - 2, m); }
+ll divide(ll a, ll b, ll m = MOD) { return mul(a, inv(b, m), m); }
 
 void solve() {
+  int n;
+  cin >> n;
+  vvi adj1(n), adj2(n);
+  fo(i, n - 1) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj1[u].pb(v);
+    adj1[v].pb(u);
+  }
+  fo(i, n - 1) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj2[u].pb(v);
+    adj2[v].pb(u);
+  }
+  auto centroid = [&](vvi& adj) -> int {
+    vi st(n);
+    auto dfs = [&](auto&& dfs, int u, int p) -> void {
+      st[u] = 1;
+      for (auto x : adj[u]) {
+        if (x == p) continue;
+        dfs(dfs, x, u);
+        st[u] += st[x];
+      }
+    };
+    dfs(dfs, 0, -1);
+    int root = 0;
+    auto dfs2 = [&](auto&& dfs2, int& root) -> void {
+      for (auto x : adj[root]) {
+        if (st[x] > st[root] - st[x]) {
+          st[root] -= st[x];
+          st[x] += st[root];
+          root = x;
+          dfs2(dfs2, root);
+          return;
+        }
+      }
+    };
+    dfs2(dfs2, root);
+    vi cent = {root};
+    for (auto x : adj[root]) {
+      if (st[x] == st[root] - st[x]) {
+        cent.pb(x);
+      }
+    }
+    auto dfs3 = [&](auto&& dfs3, int nd, int p) -> int {
+      int hash = 1;
+      for (auto x : adj[nd]) {
+        if (x == p) continue;
+        hash = mul(hash, power(3, dfs3(dfs3, x, nd)));
+      }
+      return power(2, hash);
+    };
+    int total_hash = 1;
+    for (auto x : cent) {
+      total_hash = mul(total_hash, dfs3(dfs3, x, -1));
+    }
+    return total_hash;
+  };
+  bool y = centroid(adj1) == centroid(adj2);
+  YN(y);
 }

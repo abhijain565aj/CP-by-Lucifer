@@ -69,27 +69,51 @@ void file(string s = "") {
 
 constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
-constexpr int INF = 1e18;
-
-void solve();
-void precompute();
+// constexpr int INF = 1e18;
 
 signed main() {
   fastio;
-  file();
-  precompute();
+  int n, k;
+  cin >> n >> k;
+  vs s(n);
+  for (auto& x : s) cin >> x;
+  v(v(pii)) diag(2 * n - 1);
+  fo(i, n) fo(j, n) diag[i - j + n - 1].pb({i, j});
 
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  vvi A(n + 1, vi(n + 1));
+  vvi Same(n + 1, vi(n + 1));
+  vvi Next(n + 1, vi(n + 1));
+  fo(c, k) {
+    fo(i, n) fo(j, n) {
+      A[i + 1][j + 1] = A[i][j + 1] + A[i + 1][j] - A[i][j] + (s[i][j] == 'A' + c);
+      if (s[i][j] == 'A' + c) {
+        Same[i + 1][j + 1] = A[i + 1][j + 1];
+      }
+      if (i < n - 1 && j < n - 1 && s[i + 1][j + 1] == 'A' + c) {
+        Next[i + 1][j + 1] = A[i + 1][j + 1];
+      }
+    }
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  vi ans(n);
+  for (auto& v : diag) {
+    for (int lp = 0, rp = 0; lp < (int)v.size(); lp++) {
+      auto [i, j] = v[lp];
+      auto c = s[i][j];
+      rp = max(rp, lp);
+      while (true) {
+        if (rp == (int)v.size() - 1) break;
+        auto [i1, j1] = v[rp];
+        if (i1 >= n - 1 || j1 >= n - 1) break;
+        if (s[i1 + 1][j1 + 1] != c) break;
+        // auto& A = cnt[c - 'A'];
+        // assert(i1 + 2 <= n && j1 + 2 <= n && i < n && j < n);
+        auto ct = A[i1 + 2][j1 + 2] - A[i][j1 + 2] - A[i1 + 2][j] + A[i][j];
+        if (ct != (i1 + 2 - i) * (j1 + 2 - j)) break;
+        rp++;
+      }
+      // ans[c - 'A'] += rp - lp + 1;
+      ans[c - 'A'] += rp - lp + 1;
+    }
+  }
+  fo(i, k) cout << ans[i] << "\n";
 }

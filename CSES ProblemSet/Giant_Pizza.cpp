@@ -76,20 +76,55 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m;
+  cin >> m >> n;
+  vvi adj(n * 2), radj(2 * n);
+  fo(i, m) {
+    char c1, c2;
+    int x1, x2;
+    cin >> c1 >> x1 >> c2 >> x2;
+    x1--, x2--;
+    int x1c = x1 + n, x2c = x2 + n;
+    if (c1 == '-') swap(x1, x1c);
+    if (c2 == '-') swap(x2, x2c);
+    adj[x1c].pb(x2);
+    adj[x2c].pb(x1);
+    radj[x2].pb(x1c);
+    radj[x1].pb(x2c);
   }
-}
 
-void precompute() {
-}
-
-void solve() {
+  vi vis(2 * n);
+  stack<int> st;
+  auto dfs1 = [&](auto&& dfs1, int nd) -> void {
+    vis[nd] = 1;
+    for (auto x : adj[nd]) {
+      if (!vis[x]) dfs1(dfs1, x);
+    }
+    st.push(nd);
+  };
+  fo(i, 2 * n) if (!vis[i]) {
+    dfs1(dfs1, i);
+  }
+  vi comp(2 * n, -1);
+  int curr = 0;
+  auto dfs2 = [&](auto&& dfs2, int nd) -> void {
+    comp[nd] = curr;
+    for (auto x : radj[nd]) {
+      if (comp[x] == -1) dfs2(dfs2, x);
+    }
+  };
+  while (!st.empty()) {
+    auto t = st.top();
+    st.pop();
+    if (comp[t] != -1) continue;
+    dfs2(dfs2, t);
+    curr++;
+  }
+  fo(i, n) if (comp[i] == comp[i + n]) {
+    cout << "IMPOSSIBLE\n";
+    return 0;
+  }
+  fo(i, n) {
+    cout << (comp[i] > comp[i + n] ? "+" : "-") << " ";
+  }
 }

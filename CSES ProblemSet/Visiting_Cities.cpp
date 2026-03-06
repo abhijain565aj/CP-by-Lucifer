@@ -76,20 +76,10 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m;
+  cin >> n >> m;
+  v(vi) adj(n);
+  fo(i,m){
+    int u, v;
   }
-}
-
-void precompute() {
-}
-
-void solve() {
 }

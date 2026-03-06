@@ -76,20 +76,25 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
-  precompute();
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  map<int, int> mp;
+  fo(i, n) mp[a[i]] = -1;
 
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  vi dp(n + 1), dp_pref(n + 1, 0);
+  dp[0] = dp_pref[0] = 1;
+  int lp = -1;
+  for (int i = 1; i <= n; i++) {
+    lp = max(mp[a[i - 1]], lp);
+    debug(dp_pref, i, lp);
+    int pref = dp_pref[i - 1] - ((lp >= 0) ? dp_pref[lp] : 0);
+    dp[i] = (MOD + pref % MOD) % MOD;
+    dp_pref[i] = dp[i] + ((i > 0) ? dp_pref[i - 1] : 0);
+    dp_pref[i] %= MOD;
+    mp[a[i - 1]] = i - 1;
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  debug(dp, dp_pref);
+  cout << dp.back();
 }

@@ -71,99 +71,88 @@ constexpr int MOD = 1000000007;
 constexpr int N = 1e5 + 1;
 constexpr int INF = 1e18;
 
-void solve();
-void precompute();
+// disjoint set union
+struct DSU {
+  vector<int> parent, size;  // parent of each node and size of each component
+  int components;            // number of connected components
+  DSU(int n) {
+    parent.resize(n);
+    size.resize(n, 1);
+    components = n;
+    for (int i = 0; i < n; i++) {
+      parent[i] = i;
+    }
+  }
+  int find(int x) {
+    if (parent[x] == x) {
+      return x;
+    }
+    return parent[x] = find(parent[x]);  // path compression
+  }
+  void unite(int x, int y) {
+    x = find(x);  // find the parent of x
+    y = find(y);  // find the parent of y
+    if (x != y)   // if x and y are not in the same component
+    {
+      if (size[x] < size[y]) {
+        swap(x, y);
+      }
+      parent[y] = x;
+      size[x] += size[y];
+      components--;
+    }
+  }
+  bool same(int x, int y)  // check if x and y are in the same component
+  {
+    return find(x) == find(y);
+  }
+  int getSize(int x)  // get the size of the component of x
+  {
+    return size[find(x)];
+  }
+  int getComponents()  // get the number of connected components
+  {
+    return components;
+  }
+};
 
+// Modular Arithmetic
+ll mod(ll a, ll m = MOD) { return (a % m + m) % m; }
+ll add(ll a, ll b, ll m = MOD) { return mod(a + b, m); }
+ll sub(ll a, ll b, ll m = MOD) { return mod(a - b, m); }
+ll mul(ll a, ll b, ll m = MOD) { return mod(a * b, m); }
+ll power(ll a, ll b, ll m = MOD) {
+  ll res = 1;
+  while (b) {
+    if (b & 1)
+      res = mul(res, a, m);
+    a = mul(a, a, m);
+    b >>= 1;
+  }
+  return res;
+}
+ll inv(ll a, ll m = MOD) { return power(a, m - 2, m); }
+ll divide(ll a, ll b, ll m = MOD) { return mul(a, inv(b, m), m); }
+
+// property = even subgraphs of a connected graph G = 2^(m-n+1)
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  // cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m;
+  cin >> n >> m;
+  DSU dsu(n);
+  vi ec(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    ec[u]++;
+    dsu.unite(u, v);
   }
-}
-
-void precompute() {
-}
-
-struct Trienode {
-  int val;
-  int level;
-  int counts;
-  Trienode* child[2];
-  Trienode(int val, int level) : val(val), level(level) {
-    child[0] = child[1] = nullptr;
-    counts = 0;
-  }
-};
-
-struct Trie {
-  Trienode* root;
-  Trie() {
-    root = new Trienode(0, 32);
-  }
-  void insert(int num) {
-    root->counts++;
-    Trienode* node = root;
-    loop(i, 31, 0) {
-      int bit = (num >> i) & 1;
-      if (!node->child[bit]) {
-        node->child[bit] = new Trienode(bit, i);
-      }
-      node = node->child[bit];
-      node->counts++;
-    }
-  }
-
-  int max_xor(int num, int avoid) {
-    debug(num, avoid);
-    int ans = 0;
-    Trienode* node = root;
-    // vi bits;
-    bool matching = avoid != -1;
-    if (root->counts == 1 && avoid != -1) return 0;
-    loop(i, 31, 0) {
-      int bit = (num >> i) & 1;
-      int avoid_bit = (avoid >> i) & 1;
-      // if (!node) return 0;
-      auto parent = node;
-      if (node->child[!bit]) {
-        if (avoid_bit != 1 - bit) matching = false;
-        node = parent->child[!bit];
-        if (matching && node->counts == 1) {
-          matching = false;
-          node = parent->child[bit];
-        } else {
-          ans |= (1 << i);
-        }
-      } else {
-        if (avoid_bit != bit) matching = false;
-        node = node->child[bit];
-      }
-    }
-    // debug(bits);
-    return ans;
-  }
-};
-
-void solve() {
-  int n;
-  cin >> n;
-  vi a(n);
-  read(a, n);
-  Trie trie;
-  trie.insert(0);
-  int ans = 0;
-  int running_prefix = 0;
-  fo(i, n) {
-    running_prefix ^= a[i];
-    ans = max(ans, trie.max_xor(running_prefix, -1));
-    trie.insert(running_prefix);
+  map<int, int> mp;
+  fo(i, n) mp[dsu.find(i)] += ec[i];
+  int ans = 1;
+  for (auto [p, ec] : mp) {
+    ans = mul(ans, power(2, ec - dsu.getSize(p) + 1));
   }
   cout << ans << endl;
 }

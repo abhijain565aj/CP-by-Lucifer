@@ -92,4 +92,50 @@ void precompute() {
 }
 
 void solve() {
+  int n;
+  cin >> n;
+  auto ask = [&](int i, int j) -> int {
+    cout << "? " << i << " " << j << endl;
+    int dis;
+    cin >> dis;
+    return dis;
+  };
+  int mxd = 0, c1 = 1;
+  // n^2 queries for corner1
+  for (int j = 2; j <= n * n; j++) {
+    int v = ask(1, j);
+    if (v > mxd) c1 = j, mxd = v;
+  }
+  // distances w.r.t corner 1;
+  vi D1(n * n + 1), D2(n * n + 1);
+  for (int j = 1; j <= n * n; j++) {
+    D1[j] = ask(c1, j);
+  }
+
+  vi ctr;
+  for (int j = 1; j <= n * n; j++)
+    if (D1[j] == n - 1) ctr.pb(j);
+
+  int c2 = ctr[0];
+  mxd = 0;
+  for (auto x : ctr) {
+    int v = ask(ctr[0], x);
+    if (v > mxd) mxd = v, c2 = x;
+  }
+
+  for (int j = 1; j <= n * n; j++) {
+    D2[j] = ask(c2, j);
+  }
+
+  vvi a(n, vi(n));
+  for (int i = 1; i <= n * n; i++) {
+    int i1 = (D1[i] - D2[i] + n - 1) / 2;
+    int j1 = (D1[i] + D2[i] - n + 1) / 2;
+    a[i1][j1] = i;
+  }
+  cout << "!" << endl;
+  fo(i, n) {
+    fo(j, n) cout << a[i][j] << " ";
+    cout << endl;
+  }
 }

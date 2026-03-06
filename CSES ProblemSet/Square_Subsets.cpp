@@ -68,28 +68,71 @@ void file(string s = "") {
 }
 
 constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int N = 1001;
 constexpr int INF = 1e18;
 
 void solve();
 void precompute();
 
+using B = bitset<N + 10>;
+// Modular Arithmetic
+ll mod(ll a, ll m = MOD) { return (a % m + m) % m; }
+ll add(ll a, ll b, ll m = MOD) { return mod(a + b, m); }
+ll sub(ll a, ll b, ll m = MOD) { return mod(a - b, m); }
+ll mul(ll a, ll b, ll m = MOD) { return mod(a * b, m); }
+ll power(ll a, ll b, ll m = MOD) {
+  ll res = 1;
+  while (b) {
+    if (b & 1)
+      res = mul(res, a, m);
+    a = mul(a, a, m);
+    b >>= 1;
+  }
+  return res;
+}
+ll inv(ll a, ll m = MOD) { return power(a, m - 2, m); }
+ll divide(ll a, ll b, ll m = MOD) { return mul(a, inv(b, m), m); }
+
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  vvi p(N * 5);
+  map<int, int> mp;
+  int ind = 0;
+  for (int i = 2; i < N * 5; i++) {
+    if (p[i].size()) continue;
+    mp[i] = ind++;
+    for (int j = i; j < N * 5; j += i) p[j].pb(i);
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  vector<B> b(n);
+  fo(i, n) {
+    auto& v = p[a[i]];
+    for (auto j : v) {
+      int cnt = 0;
+      while (a[i] % j == 0) {
+        a[i] /= j;
+        cnt++;
+      }
+      if (cnt % 2) b[i].set(mp[j]);
+    }
+  }
+  int np = mp.size();
+  vector<B> basis(N);
+  int sz = 0;
+  auto add = [&](B b) -> void {
+    for (int i = np; i >= 0; i--) {
+      if (!b[i]) continue;
+      if (!basis[i].any()) {
+        basis[i] = b;
+        sz++;
+        return;
+      }
+      b ^= basis[i];
+    }
+  };
+  for (auto& x : b) add(x);
+  cout << power(2, n - sz) << endl;
 }

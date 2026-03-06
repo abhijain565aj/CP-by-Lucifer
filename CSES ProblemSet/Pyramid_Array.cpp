@@ -75,21 +75,14 @@ void solve();
 void precompute();
 
 signed main() {
-  fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n;
+  cin >> n;
+  vi a(n);
+  read(a, n);
+  vi inc(n), dec(n);
+  ordered_set<int> os;
+  fo(i, n) {
+    os.insert(a[i]);
+    
   }
-}
-
-void precompute() {
-}
-
-void solve() {
 }

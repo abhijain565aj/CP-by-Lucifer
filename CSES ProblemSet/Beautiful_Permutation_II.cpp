@@ -76,20 +76,45 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
-  precompute();
+  int n;
+  cin >> n;
+  vi a(n);
+  a[0] = 1;
+  // 1 3 5 2 4 6 8 10 7 9
+  // 0 modulo 5 done
+  // 1 modulo 5 done
+  // 2 modulo 5 = 11, 9 , 12
+  // 3 modulo 5 11, 13, 9, 12
+  // 4 modulo 5 12 14 11 13
 
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  if (n == 1) {
+    cout << 1 << endl;
+    return 0;
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  if (n <= 3) {
+    cout << "NO SOLUTION\n";
+    return 0;
+  }
+  fo(i, n / 5) {
+    vi arr = {1, 3, 5, 2, 4};
+    fo(j, 5) a[i * 5 + j] = arr[j] + i * 5;
+  }
+  if (n % 5 == 1) {
+    a.back() = n;
+  } else if (n % 5 == 2) {
+    a[n - 1] = n;
+    a[n - 2] = n - 3;
+    a[n - 3] = n - 1;
+  } else if (n % 5 == 3) {
+    a[n - 1] = n - 1;
+    a[n - 2] = n - 4;
+    a[n - 3] = n;
+    a[n - 4] = n - 2;
+  } else if (n % 5 == 4) {
+    a[n - 1] = n - 1;
+    a[n - 2] = n - 3;
+    a[n - 3] = n;
+    a[n - 4] = n - 2;
+  }
+  print(a, n);
 }

@@ -76,20 +76,38 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m;
+  cin >> n >> m;
+  vvi adj(n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u].pb(v);
+    adj[v].pb(u);
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  int ans = n + 1;
+  for (int root = 0; root < n; root++) {
+    vi vis(n), dis(n), par(n, -1);
+    queue<int> q;
+    q.push(root);
+    vis[root] = 1;
+    while (!q.empty()) {
+      auto t = q.front();
+      q.pop();
+      for (auto x : adj[t]) {
+        if (x == par[t]) continue;
+        if (vis[x]) {
+          ans = min(dis[x] + dis[t] + 1, ans);
+        } else {
+          vis[x] = 1;
+          par[x] = t;
+          dis[x] = dis[t] + 1;
+          q.push(x);
+        }
+      }
+    }
+  }
+  if (ans == n + 1) ans = -1;
+  cout << ans << endl;
 }

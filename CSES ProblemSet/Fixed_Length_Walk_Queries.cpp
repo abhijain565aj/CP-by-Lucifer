@@ -76,20 +76,40 @@ void precompute();
 
 signed main() {
   fastio;
-  file();
-  precompute();
-
-  int testCases = 1;
-  cin >> testCases;
-
-  fo(tt, testCases) {
-    Test(tt + 1);
-    solve();
+  int n, m, q;
+  cin >> n >> m >> q;
+  vvi adj(2 * n);
+  fo(i, m) {
+    int u, v;
+    cin >> u >> v;
+    u--, v--;
+    adj[u].pb(n + v);
+    adj[n + u].pb(v);
+    adj[v].pb(u + n);
+    adj[n + v].pb(u);
   }
-}
-
-void precompute() {
-}
-
-void solve() {
+  vvi dis(n, vi(2 * n, -1));
+  auto bfs = [&](int a) -> void {
+    queue<int> q;
+    q.push(a);
+    dis[a][a] = 0;
+    while (!q.empty()) {
+      auto t = q.front();
+      q.pop();
+      for (auto x : adj[t]) {
+        if (dis[a][x] == -1) {
+          dis[a][x] = dis[a][t] + 1;
+          q.push(x);
+        }
+      }
+    }
+  };
+  fo(i, n) bfs(i);
+  while (q--) {
+    int a, b, x;
+    cin >> a >> b >> x;
+    a--, b--;
+    int p = (x % 2) ? dis[a][b + n] : dis[a][b];
+    YN(x >= p && p != -1);
+  }
 }

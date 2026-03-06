@@ -80,7 +80,7 @@ signed main() {
   precompute();
 
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
 
   fo(tt, testCases) {
     Test(tt + 1);
@@ -92,4 +92,27 @@ void precompute() {
 }
 
 void solve() {
+  int n;
+  cin >> n;
+  vi pre(n);
+  vi in(n);
+  read(pre, n);
+  read(in, n);
+  vi mp(n + 1);
+  fo(i, n) mp[in[i]] = i;
+  auto rec = [&](auto&& rec, int pl, int pr, int il, int ir) {
+    if (pr < pl) return;
+    if (pl == pr) {
+      cout << pre[pl] << " ";
+      return;
+    }
+    debug(pl);
+    int root = pre[pl];
+    int ind = mp[root];
+    int lsz = ind - il;
+    rec(rec, pl + 1, pl + lsz, il, ind - 1);
+    rec(rec, pl + lsz + 1, pr, ind + 1, ir);
+    cout << root << " ";
+  };
+  rec(rec, 0, n - 1, 0, n - 1);
 }

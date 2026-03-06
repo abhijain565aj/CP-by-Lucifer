@@ -80,7 +80,7 @@ signed main() {
   precompute();
 
   int testCases = 1;
-  cin >> testCases;
+  // cin >> testCases;
 
   fo(tt, testCases) {
     Test(tt + 1);
@@ -92,4 +92,31 @@ void precompute() {
 }
 
 void solve() {
+  int n, k;
+  cin >> n >> k;
+  vs a(n);
+  for (auto& x : a) cin >> x;
+  vvi seen(n, vi(n, -1));
+  fo(i, k) {
+    bool found = false;
+    fo(j, n) {
+      if (found) break;
+      vi cols;
+      fo(t, n) if (a[j][t] == 'A' + i) cols.pb(t);
+      for (auto x : cols) {
+        if (found) break;
+        for (auto y : cols)
+          if (x < y) {
+            if (seen[x][y] == i) {
+              cout << "YES\n";
+              found = true;
+              break;
+            } else {
+              seen[x][y] = i;
+            }
+          }
+      }
+    }
+    if (!found) cout << "NO\n";
+  }
 }
