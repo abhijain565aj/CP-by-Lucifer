@@ -1,4 +1,4 @@
-// Solution by Abhi Jain aka Lucifer aka abhijain565aj
+// Solution by Abhi Jain
 #pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
 
@@ -14,7 +14,6 @@ template <typename T>
 using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 // find_by_order, order_of_key
 
-// #define ONLINE_JUDGE
 #ifndef ONLINE_JUDGE
 #include "./DEBUG.cpp"
 #define local true
@@ -26,8 +25,6 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 #endif
 
 #define int long long
-typedef long long ll;
-typedef long double ld;
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -38,7 +35,6 @@ typedef long double ld;
 
 #define fo(i, n) for (int i = 0; i < n; i++)
 #define re(i, n) for (int i = n - 1; i >= 0; i--)
-#define loop(i, a, b) for (int i = a; (a >= b) ? i >= b : i <= b; (a >= b) ? i-- : i++)
 
 #define YN(possible) cout << ((possible) ? "YES" : "NO") << endl;
 #define all(x) (x).begin(), (x).end()
@@ -46,7 +42,6 @@ typedef long double ld;
 #define F first
 #define S second
 #define pb push_back
-// a.resize(unique(all(a)) - a.begin());
 
 #define fastio             \
   ios::sync_with_stdio(0); \
