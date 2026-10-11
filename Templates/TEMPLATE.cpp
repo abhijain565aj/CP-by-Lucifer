@@ -4,7 +4,7 @@
 using namespace std;
 
 #ifndef ONLINE_JUDGE
-#include "./DEBUG.cpp"
+#include "./Templates/DEBUG.cpp"
 #define local true
 #else
 #define debug(...)
