@@ -2,6 +2,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// Snippet: Treap
+// Prefix: Treap
+// -- start-snippet
 struct Treap {
  public:
   struct Node {
@@ -81,3 +84,4 @@ struct Treap {
     t->size = 1 + getSize(t->left) + getSize(t->right);
   }
 };
+// -- end-snippet

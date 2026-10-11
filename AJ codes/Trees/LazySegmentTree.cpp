@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-// Lazy Segment Tree
+
+// Snippet: LazySegmentTree
+// Prefix: LazySegmentTree
+// -- start-snippet
 template <typename T>
 struct LazySegmentTree {
   vector<T> tree;
@@ -72,3 +75,4 @@ struct LazySegmentTree {
     }
   }
 };
+// -- end-snippet

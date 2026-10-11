@@ -1,22 +1,22 @@
-// LiChaoTree
 #include <bits/stdc++.h>
 using namespace std;
-#define pii pair<int, int>
-#define pb push_back
 
+// Snippet: LiChaoTree
+// Prefix: LiChaoTree
+// -- start-snippet
 struct LiChaoTree {
   int n;
   vector<int> tree;
-  vector<pii> line;
+  vector<pair<int,int>> line;
   LiChaoTree(int n) {
     this->n = n;
     tree.resize(4 * n, 0);
   }
-  pii bestLine(int x) {
+  pair<int,int> bestLine(int x) {
     return line[queryp(1, 0, n - 1, x)];
   }
-  void addLine(pii nline) {
-    line.pb(nline);
+  void addLine(pair<int,int> nline) {
+    line.push_back(nline);
     updatep(1, 0, n - 1, line.size() - 1);
   }
   int best(int l1, int l2, int x) {
@@ -55,3 +55,4 @@ struct LiChaoTree {
       updatep(v * 2 + 1, tm + 1, tr, new_line);
   }
 };
+// -- end-snippet

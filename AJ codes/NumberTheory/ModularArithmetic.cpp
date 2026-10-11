@@ -3,6 +3,9 @@ using namespace std;
 #define int long long
 // #define MOD = 1000000007
 int MOD = 1000000007;
+// Snippet: Modular Arithmetic
+// Prefix: modfn
+// -- start-snippet
 
 // Modular Arithmetic
 int mod(int a, int m = MOD) { return (a % m + m) % m; }
@@ -13,7 +16,7 @@ int power(int a, int b, int m = MOD) {
   int res = 1;
   while (b) {
     if (b & 1)
-      res = mul(res, a, m);
+    res = mul(res, a, m);
     a = mul(a, a, m);
     b >>= 1;
   }
@@ -21,3 +24,4 @@ int power(int a, int b, int m = MOD) {
 }
 int inv(int a, int m = MOD) { return power(a, m - 2, m); }
 int divide(int a, int b, int m = MOD) { return mul(a, inv(b, m), m); }
+// -- end-snippet

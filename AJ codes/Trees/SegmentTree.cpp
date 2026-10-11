@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-// Segment Tree
+
+// Snippet: SegmentTree
+// Prefix: SegmentTree
+// -- start-snippet
 template <typename T>
 struct SegmentTree {
   vector<T> tree;
@@ -60,3 +63,4 @@ struct SegmentTree {
     }
   }
 };
+// -- end-snippet

@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// Snippet: 2D Segment Tree
+// Prefix: SegTree2D
+// -- start-snippet
 struct SegTree2D {
   int n, m;
   vector<vector<int>> a, t;
@@ -82,3 +85,4 @@ struct SegTree2D {
     upd_y(vx, lx, rx, 1, 0, m - 1, x, y, v);
   }
 };
+// -- end-snippet
