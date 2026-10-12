@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-// Segment Tree
+
+// Snippet: Heavy Light Decomposition
+// Prefix: hld
+// -- start-snippet
 template <typename T>
 struct SegmentTree {
   vector<T> tree;
@@ -117,20 +120,29 @@ class HLD {
   }
   void modify_node(int u, T val) { segtree.set(pos[u], val); }
 };
-// int main() {
-//   HLD<int, 0> H(adj, 0);
-//   for (int i = 0; i < n; i++) {
-//     H.modify_node(i, v[i]);
-//   }
-//   while (q--) {
-//     if (type == 1) {
-//       cin >> s >> x;
-//       --s;
-//       H.modify_node(s, x);
-//     } else if (type == 2) {
-//       cin >> a >> b;
-//       --a, --b;
-//       cout << H.query_path(a, b) << " ";
-//     }
-//   }
-// }
+// -- end-snippet
+
+int main() {
+  int n;
+  vector<vector<int>> adj;
+  vector<int> v;
+  
+  HLD<int, 0> H(adj, 0);
+  for (int i = 0; i < n; i++) {
+    H.modify_node(i, v[i]);
+  }
+  while (q--) {
+    int type;
+    if (type == 1) {
+      int s, x;
+      cin >> s >> x;
+      --s;
+      H.modify_node(s, x);
+    } else if (type == 2) {
+      int a,b;
+      cin >> a >> b;
+      --a, --b;
+      cout << H.query_path(a, b) << " ";
+    }
+  }
+}

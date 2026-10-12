@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+// Snippet: Disjoint Set Union
+// Prefix: dsi
+// -- start-snippet
 struct DSU {
   vector<int> parent, size;
   int components;
@@ -36,3 +38,4 @@ struct DSU {
     return components;
   }
 };
+// -- end-snippet

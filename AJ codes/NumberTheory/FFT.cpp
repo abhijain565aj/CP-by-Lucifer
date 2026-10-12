@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// Snippet: Fast Fourier Transforms (Multiply polyn)
+// Prefix: fft
+// -- start-snippet
 struct FFT {
   typedef complex<double> cd;
   const double PI = acos(-1);
@@ -58,3 +61,4 @@ struct FFT {
     return res;
   }
 };
+// -- end-snippet
