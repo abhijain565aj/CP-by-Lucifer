@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 // Snippet: Disjoint Set Union
-// Prefix: dsi
+// Prefix: dsu
 // -- start-snippet
 struct DSU {
   vector<int> parent, size;
