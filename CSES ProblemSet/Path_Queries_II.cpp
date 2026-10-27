@@ -68,73 +68,102 @@ void file(string s = "") {
 }
 
 constexpr int MOD = 1000000007;
-constexpr int N = 1e5 + 1;
+constexpr int N = 2e5 + 1;
 constexpr int INF = 1e18;
 
-int treeArr[10 * N];
 template <typename T>
 struct SegmentTree {
   int n;
   T default_value;
-  function<T(T, T)> merge;
+  vi tree;
   SegmentTree(
       int n,
-      T default_value = 0,
-      function<T(T, T)> merge = [](T l, T r) { return max(l, r); }) {
+      T default_value = 0
+  ) {
     this->n = n;
     this->default_value = default_value;
-    this->merge = merge;
-    // tree.resize(4 * n);
+    tree.resize(4 * n);
   }
-  void build(vector<T>& a) {
-    buildp(a, 1, 0, n - 1);
-  }
-  T query(int l, int r) {
-    return queryp(1, 0, n - 1, l, r);
-  }
-  void update(int pos, T new_val) {
-    updatep(1, 0, n - 1, pos, new_val);
+  // T merge(T x, T y){
+  //   return max(x,y);
+  // }
+  // void build(vector<T>& a) {
+  //   buildp(a, 1, 0, n - 1);
+  // }
+  // T query(int l, int r) {
+  //   return queryp(1, 0, n - 1, l, r);
+  // }
+  // void update(int pos, T new_val) {
+  //   updatep(1, 0, n - 1, pos, new_val);
+  // }
+
+  // void buildp(vector<T>& a, int v, int tl, int tr) {
+  //   if (tl == tr) {
+  //     treeArr[v] = a[tl];
+  //   } else {
+  //     int tm = (tl + tr) / 2;
+  //     buildp(a, v * 2, tl, tm);
+  //     buildp(a, v * 2 + 1, tm + 1, tr);
+  //     treeArr[v] = merge(treeArr[v * 2], treeArr[v * 2 + 1]);
+  //   }
+  // }
+  // T queryp(int v, int tl, int tr, int l, int r) {
+  //   if (l > r) {
+  //     return default_value;
+  //   }
+  //   if (l == tl && r == tr) {
+  //     return treeArr[v];
+  //   }
+  //   int tm = (tl + tr) / 2;
+  //   return merge(queryp(v * 2, tl, tm, l, min(r, tm)), queryp(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
+  // }
+  // void updatep(int v, int tl, int tr, int pos, T new_val) {
+  //   if (tl == tr) {
+  //     treeArr[v] = new_val;
+  //   } else {
+  //     int tm = (tl + tr) / 2;
+  //     if (pos <= tm) {
+  //       updatep(v * 2, tl, tm, pos, new_val);
+  //     } else {
+  //       updatep(v * 2 + 1, tm + 1, tr, pos, new_val);
+  //     }
+  //     treeArr[v] = merge(treeArr[v * 2], treeArr[v * 2 + 1]);
+  //   }
+  // }
+  T merge(T x, T y) {
+      return max(x, y);
   }
 
-  void buildp(vector<T>& a, int v, int tl, int tr) {
-    if (tl == tr) {
-      treeArr[v] = a[tl];
-    } else {
-      int tm = (tl + tr) / 2;
-      buildp(a, v * 2, tl, tm);
-      buildp(a, v * 2 + 1, tm + 1, tr);
-      treeArr[v] = merge(treeArr[v * 2], treeArr[v * 2 + 1]);
-    }
+  void build(vector<T>& a) {
+      for (int i = 0; i < n; i++)
+          tree[n + i] = a[i];
+
+      for (int i = n - 1; i >= 1; i--)
+          tree[i] = merge(tree[i << 1], tree[i << 1 | 1]);
   }
-  T queryp(int v, int tl, int tr, int l, int r) {
-    if (l > r) {
-      return default_value;
-    }
-    if (l == tl && r == tr) {
-      return treeArr[v];
-    }
-    int tm = (tl + tr) / 2;
-    return merge(queryp(v * 2, tl, tm, l, min(r, tm)), queryp(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-  }
-  void updatep(int v, int tl, int tr, int pos, T new_val) {
-    if (tl == tr) {
-      treeArr[v] = new_val;
-    } else {
-      int tm = (tl + tr) / 2;
-      if (pos <= tm) {
-        updatep(v * 2, tl, tm, pos, new_val);
-      } else {
-        updatep(v * 2 + 1, tm + 1, tr, pos, new_val);
+
+  T query(int l, int r) {
+      T res = default_value;
+      for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
+          if (l & 1)
+              res = merge(res, tree[l++]);
+          if (!(r & 1))
+              res = merge(res, tree[r--]);
       }
-      treeArr[v] = merge(treeArr[v * 2], treeArr[v * 2 + 1]);
-    }
+      return res;
+  }
+
+  void update(int pos, T new_val) {
+      for (tree[pos += n] = new_val; pos > 1; pos >>= 1)
+          tree[pos >> 1] =
+              merge(tree[pos & ~1], tree[pos | 1]);
   }
 };
 
 template <class T, bool VALS_IN_EDGES>
 
 class HLD {
- private:
+private:
   int N, R, tim = 0;  // n, root node, time
   vector<vector<int>> adj;
   vector<int> par, siz, depth, rt, pos;  // parent, size, depth, root, position arrays
@@ -160,20 +189,19 @@ class HLD {
       dfs_hld(u);
     }
   }
-  /** process all heavy path and combine their results */
-  template <class B>
-  void process(int u, int v, B op) {
-    for (; rt[u] != rt[v]; v = par[rt[v]]) {
-      if (depth[rt[u]] > depth[rt[v]]) swap(u, v);
-      op(pos[rt[v]], pos[v]);
+
+  
+public:
+  void build(vector<T>& a) {
+    vector<T> b(N);
+    for (int i = 0; i < N; i++) {
+        b[pos[i]] = a[i];
     }
-    if (depth[u] > depth[v]) swap(u, v);
-    op(pos[u] + VALS_IN_EDGES, pos[v]);
+    segtree.build(b);
   }
 
- public:
   HLD(vector<vector<int>> _adj, int _R)
-      : N(_adj.size()), R(_R), adj(_adj), par(N, -1), siz(N, 1), depth(N), rt(N), pos(N), segtree(N)  // modify as needed
+  : N(_adj.size()), R(_R), adj(_adj), par(N, -1), siz(N, 1), depth(N), rt(N), pos(N), segtree(N)  // modify as needed
   {
     rt[R] = R;
     dfs_sz(R);   // initialise par, sz, depth
@@ -181,9 +209,16 @@ class HLD {
   }
   T query_path(int u, int v) {
     T res = 0;  // default value, modify depending on problem
-    process(u, v, [&](int l, int r) {
-      res = max(res, segtree.query(l, r));  // modify depending on problem
-    });
+    /** process all heavy path and combine their results */
+    auto op = [&](int l, int r) {
+      res = max(res, segtree.query(l, r));
+    };
+    for (; rt[u] != rt[v]; v = par[rt[v]]) {
+      if (depth[rt[u]] > depth[rt[v]]) swap(u, v);
+      op(pos[rt[v]], pos[v]);
+    }
+    if (depth[u] > depth[v]) swap(u, v);
+    op(pos[u] + VALS_IN_EDGES, pos[v]);
     return res;
   }
   void modify_node(int u, T val) { segtree.update(pos[u], val); }
@@ -203,9 +238,10 @@ signed main() {
     adj[v].pb(u);
   }
   HLD<int, 0> H(adj, 0);
-  for (int i = 0; i < n; i++) {
-    H.modify_node(i, val[i]);
-  }
+  H.build(val);
+  // for (int i = 0; i < n; i++) {
+  //   H.modify_node(i, val[i]);
+  // }
   while (q--) {
     int type;
     cin >> type;
