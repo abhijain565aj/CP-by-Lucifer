@@ -1,5 +1,8 @@
 .cph/
 .vscode/
+!.vscode/
+.vscode/*
+!.vscode/settings.json
 a.exe
 a.out
 input.txt

@@ -10,7 +10,8 @@ using namespace __gnu_pbds;
 template <typename T>
 using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 template <typename T>
-using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
+using ordered_multiset =
+  tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 #define int long long
 
@@ -49,7 +50,9 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 template <typename A, typename B>
 ostream& operator<<(ostream& os, const pair<A, B>& p);
-template <typename T_container, typename T = typename enable_if<!is_same<T_container, string>::value, typename T_container::value_type>::type>
+template <typename T_container,
+          typename T = typename enable_if<!is_same<T_container, string>::value,
+                                          typename T_container::value_type>::type>
 ostream& operator<<(ostream& os, const T_container& v) {
   os << '[';
   string sep;
@@ -57,9 +60,13 @@ ostream& operator<<(ostream& os, const T_container& v) {
   return os << ']';
 }
 template <typename A, typename B>
-ostream& operator<<(ostream& os, const pair<A, B>& p) { return os << '(' << p.first << ", " << p.second << ')'; }
+ostream& operator<<(ostream& os, const pair<A, B>& p) {
+  return os << '(' << p.first << ", " << p.second << ')';
+}
 
-inline void _print() { cerr << endl; }
+inline void _print() {
+  cerr << endl;
+}
 template <typename T, typename... V>
 void _print(const T& t, const V&... v) {
   cerr << t;
@@ -141,6 +148,4 @@ signed main() {
   }
 }
 
-void solve(){
-  
-}
+void solve() {}
