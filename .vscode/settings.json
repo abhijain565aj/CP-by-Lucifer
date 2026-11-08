@@ -91,6 +91,6 @@
     },
     "cph.general.showLiveUserCount": true,
     "cph.general.defaultLanguage": "cpp",
-    "cph.general.defaultLanguageTemplateFileLocation": "${workspaceFolder}/Templates/TEMPLATE.cpp",
+    "cph.general.defaultLanguageTemplateFileLocation": "/Users/abhijain/CP-by-Lucifer/Templates/TEMPLATE.cpp",
     "cph.general.doTemplateFileVariableReplacement": true
 }
